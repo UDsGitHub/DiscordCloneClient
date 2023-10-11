@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import RequiredText from "./RequiredText";
+import RequiredText from "./common/RequiredText";
 import moment from "moment/moment";
 
 const Register = ({ show, toggleForm }) => {

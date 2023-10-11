@@ -1,9 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import RequiredText from "./RequiredText";
+import RequiredText from "./common/RequiredText";
 
 const Login = ({ show, toggleForm }) => {
-
   const handleSubmit = (e) => {
     e.preventDefault();
   };

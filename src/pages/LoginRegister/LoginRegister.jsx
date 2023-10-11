@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Login, Register } from "../../components";
+import { useLocation } from "react-router-dom";
 
-const LoginSignup = () => {
+const LoginRegister = () => {
+  const location = useLocation();
+  const currentURL = location.pathname;
+  console.log(currentURL);
   const [loginVisible, setLoginVisible] = useState(true);
 
   function toggleForm() {
@@ -19,4 +23,4 @@ const LoginSignup = () => {
   );
 };
 
-export default LoginSignup;
+export default LoginRegister;
