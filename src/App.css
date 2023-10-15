@@ -1,0 +1,32 @@
+html, body, #root{
+    height: 100%;
+}
+
+select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+select::-webkit-scrollbar-thumb {
+  @apply bg-grey-600;
+  border-radius: 5px;
+}
+
+.server-nav {
+  overflow-y: auto;
+  padding-left: 8px;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+
+/* Hide the scrollbar thumb in Webkit browsers */
+.server-nav::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+.server-nav::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
