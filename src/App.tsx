@@ -8,7 +8,7 @@ function App() {
       <Routes>
         <Route path="/channels/:userId" element={<Servers />} />
         <Route path="/" element={<Navigate to="/channels/@me" replace />} />
-        <Route path="/channels/@you" element={<Servers />} />
+        <Route path="/channels/@me" element={<Servers />} />
         <Route path="/login" element={<LoginRegister />} />
         <Route path="/register" element={<LoginRegister />} />
       </Routes>
