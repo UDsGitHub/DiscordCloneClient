@@ -7,7 +7,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/channels/:userId" element={<Servers />} />
-        <Route path="/" element={<Navigate to="/channels/@me" replace />} />
+        <Route path="/" element={<Navigate to="/channels/@you" replace />} />
         <Route path="/channels/@me" element={<Servers />} />
         <Route path="/login" element={<LoginRegister />} />
         <Route path="/register" element={<LoginRegister />} />
