@@ -1,8 +1,9 @@
-import React from "react";
 import { useParams, Navigate } from "react-router-dom";
-import { ServerNav } from "../../components";
+import { ServerNav, Sidebar } from "../../components";
 
-const Servers = () => {
+type ServersProps = {}
+
+const Servers = (props: ServersProps) => {
   const { userId } = useParams();
 
   // Use a default value if userId is not provided
@@ -16,7 +17,10 @@ const Servers = () => {
   return (
     <div className="h-full flex">
       <ServerNav />
-      <main className="grow bg-red-400"></main>
+      <main className="grow bg-grey-500">
+        <Sidebar />
+        <div className="grow"></div>
+      </main>
     </div>
   );
 };
