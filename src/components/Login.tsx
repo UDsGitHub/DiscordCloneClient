@@ -1,10 +1,14 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import { motion } from "framer-motion";
-import RequiredText from "./RequiredText";
+import {RequiredText} from "./common";
 
-const Login = ({ show, toggleForm }) => {
+type LoginProps = {
+  show: boolean;
+  toggleForm: () => void;
+};
 
-  const handleSubmit = (e) => {
+const Login = ({ show, toggleForm }: LoginProps) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 

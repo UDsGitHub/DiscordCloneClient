@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import RequiredText from "./RequiredText";
+import { RequiredText } from "./common";
 import moment from "moment/moment";
 
-const Register = ({ show, toggleForm }) => {
-  const handleSubmit = (e) => {
+type RegisterProps = {
+  show: boolean;
+  toggleForm: () => void;
+};
+
+const Register = ({ show, toggleForm }: RegisterProps) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
-  const daysList = ["Day"];
+  const daysList: (number | string)[] = ["Day"];
   for (let day = 1; day <= 31; day++) {
     daysList.push(day);
   }
@@ -29,7 +34,7 @@ const Register = ({ show, toggleForm }) => {
     "December",
   ];
 
-  const yearList = ["Year"];
+  const yearList: (number | string)[] = ["Year"];
   for (let year = new Date().getFullYear() - 3; year >= 1900; year--) {
     yearList.push(year);
   }
@@ -48,18 +53,18 @@ const Register = ({ show, toggleForm }) => {
     }
   };
 
-  const validatePassword = (passwordStr) => {
+  const validatePassword = (passwordStr: string): boolean => {
     let re = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
     return re.test(passwordStr);
   };
 
-  const handleDayChange = (e) => {
+  const handleDayChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setDay(e.target.value);
   };
-  const handleMonthChange = (e) => {
+  const handleMonthChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setMonth(e.target.value);
   };
-  const handleYearChange = (e) => {
+  const handleYearChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setYear(e.target.value);
   };
 
@@ -148,7 +153,7 @@ const Register = ({ show, toggleForm }) => {
                     onChange={handleDayChange}
                   >
                     {daysList.map((day, index) => (
-                      <option key={index} value={index !== 0 && day}>
+                      <option key={index} value={index !== 0 ? day : undefined}>
                         {day}
                       </option>
                     ))}
@@ -162,7 +167,10 @@ const Register = ({ show, toggleForm }) => {
                     className="grow p-2 bg-grey-800 outline-none rounded-sm"
                   >
                     {monthList.map((month, index) => (
-                      <option key={index} value={index !== 0 && month}>
+                      <option
+                        key={index}
+                        value={index !== 0 ? month : undefined}
+                      >
                         {month}
                       </option>
                     ))}
@@ -176,7 +184,10 @@ const Register = ({ show, toggleForm }) => {
                     className="grow p-2 bg-grey-800 outline-none rounded-sm"
                   >
                     {yearList.map((year, index) => (
-                      <option key={index} value={index !== 0 && year}>
+                      <option
+                        key={index}
+                        value={index !== 0 ? year : undefined}
+                      >
                         {year}
                       </option>
                     ))}
