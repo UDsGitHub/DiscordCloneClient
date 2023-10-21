@@ -2,6 +2,7 @@ import React, { FormEvent } from "react";
 import { motion } from "framer-motion";
 import {RequiredText} from "./common";
 
+
 type LoginProps = {
   show: boolean;
   toggleForm: () => void;
