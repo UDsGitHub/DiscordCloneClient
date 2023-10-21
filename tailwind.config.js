@@ -10,6 +10,7 @@ export default {
         "grey-400": "#b5bac1",
         "grey-500": "#35373c",
         "grey-600": "#313338",
+        "grey-700": "#2b2d31",
         "grey-800": "#1e1f22",
       },
     },

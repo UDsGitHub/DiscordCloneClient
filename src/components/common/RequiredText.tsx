@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
+import React from "react";
 
 type RequiredTextProps = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 const RequiredText = ({ children }: RequiredTextProps) => {

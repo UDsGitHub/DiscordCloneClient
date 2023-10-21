@@ -1,5 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
-import { ServerNav, Sidebar } from "../../components";
+import { ServerNav, DirectMessages } from "../../components";
 
 type ServersProps = {}
 
@@ -17,8 +17,8 @@ const Servers = (props: ServersProps) => {
   return (
     <div className="h-full flex">
       <ServerNav />
-      <main className="grow bg-grey-500">
-        <Sidebar />
+      <main className="grow bg-grey-600">
+        <DirectMessages />
         <div className="grow"></div>
       </main>
     </div>
