@@ -12,12 +12,12 @@ const Sidebar = ({ topBar, children }: SidebarProps) => {
   let defaultUser = currentURL === "/channels/@me";
 
   return (
-    <nav className="bg-grey-700 w-[240px] h-full shrink-0">
+    <div className="bg-grey-700 w-[240px] h-full shrink-0">
       {/* Top bar */}
-      <button className="p-2.5 w-full">{topBar}</button>
+      <button className="p-2.5 w-full shadow-md">{topBar}</button>
       {/* Channels */}
-      <div>{children}</div>
-    </nav>
+      <nav>{children}</nav>
+    </div>
   );
 };
 

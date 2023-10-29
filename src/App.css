@@ -15,7 +15,7 @@ select::-webkit-scrollbar-thumb {
   border-radius: 5px;
 }
 
-.server-nav {
+.invisible-scroll {
   overflow-y: auto;
   padding-left: 8px;
   scrollbar-width: none; 
@@ -23,10 +23,10 @@ select::-webkit-scrollbar-thumb {
 }
 
 /* Hide the scrollbar thumb in Webkit browsers */
-.server-nav::-webkit-scrollbar {
+.invisible-scroll::-webkit-scrollbar {
   width: 0.5em;
 }
 
-.server-nav::-webkit-scrollbar-thumb {
+.invisible-scroll::-webkit-scrollbar-thumb {
   background-color: transparent;
 }

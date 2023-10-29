@@ -1,9 +1,10 @@
 import { useParams, Navigate } from "react-router-dom";
-import { ServerNav, DirectMessages } from "../../components";
+import { ServerNav} from "../../components";
+import { DirectMessages } from "..";
 
-type ServersProps = {}
+type ServersProps = {};
 
-const Servers = (props: ServersProps) => {
+const MainApp = (props: ServersProps) => {
   const { userId } = useParams();
 
   // Use a default value if userId is not provided
@@ -17,12 +18,11 @@ const Servers = (props: ServersProps) => {
   return (
     <div className="h-full flex">
       <ServerNav />
-      <main className="grow bg-grey-600">
+      <main className="grow flex bg-grey-600">
         <DirectMessages />
-        <div className="grow"></div>
       </main>
     </div>
   );
 };
 
-export default Servers;
+export default MainApp;

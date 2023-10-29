@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 type AvatarProps = {
   profileImg?: any;
+  status?: string;
 };
 
 type StatusBadgeProps = {

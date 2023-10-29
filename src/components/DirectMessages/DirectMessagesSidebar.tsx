@@ -1,14 +1,14 @@
 import React from "react";
-import { UserAvatar, Sidebar } from "./common";
+import { UserAvatar, Sidebar } from "../common";
 
 type Props = {};
 
 type DMUserProps = {
-    profileImg?: string;
-    username: string;
-}
+  profileImg?: string;
+  username: string;
+};
 
-const DirectMessages = (props: Props) => {
+const DirectMessagesSidebar = (props: Props) => {
   const dmList = [..."udochukwu".toUpperCase()];
 
   const FindChat = () => {
@@ -19,7 +19,7 @@ const DirectMessages = (props: Props) => {
     );
   };
 
-  const DMUser = ({username}: DMUserProps) => {
+  const DMUser = ({ username }: DMUserProps) => {
     return (
       <li className="hover:bg-grey-500 rounded-md text-grey-400">
         <button className="px-2 h-[42px] flex items-center ">
@@ -28,7 +28,7 @@ const DirectMessages = (props: Props) => {
         </button>
       </li>
     );
-  }
+  };
 
   return (
     <Sidebar topBar={<FindChat />}>
@@ -60,11 +60,13 @@ const DirectMessages = (props: Props) => {
           <button className="text-xl">+</button>
         </div>
         <ul>
-            {dmList.map((dm, index) => <DMUser key={index} username={"Udochukwu"}/>)}
+          {dmList.map((dm, index) => (
+            <DMUser key={index} username={"Udochukwu"} />
+          ))}
         </ul>
       </div>
     </Sidebar>
   );
 };
 
-export default DirectMessages;
+export default DirectMessagesSidebar;
