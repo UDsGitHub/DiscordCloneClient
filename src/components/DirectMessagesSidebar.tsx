@@ -1,15 +1,20 @@
-import React from "react";
-import { UserAvatar, Sidebar } from "../common";
+import React, { useContext } from "react";
+import { UserAvatar, Sidebar } from "./common";
+import { DirectMessagesContext } from "../context/DirectMessages/DirectMessagesContext";
 
 type Props = {};
 
 type DMUserProps = {
   profileImg?: string;
   username: string;
+  index: number;
 };
 
 const DirectMessagesSidebar = (props: Props) => {
   const dmList = [..."udochukwu".toUpperCase()];
+  const { selectedSidebarTab, setSelectedSidebarTab } = useContext(
+    DirectMessagesContext
+  );
 
   const FindChat = () => {
     return (
@@ -19,9 +24,14 @@ const DirectMessagesSidebar = (props: Props) => {
     );
   };
 
-  const DMUser = ({ username }: DMUserProps) => {
+  const DMUser = ({ username, index }: DMUserProps) => {
     return (
-      <li className="hover:bg-grey-500 rounded-md text-grey-400">
+      <li
+        className={`hover:bg-grey-500 ${
+          selectedSidebarTab === index && "bg-grey-400/10"
+        } rounded-md text-grey-400 cursor-pointer`}
+        onClick={(e) => handleSidebarTabClick(e, index)}
+      >
         <button className="px-2 h-[42px] flex items-center ">
           <UserAvatar />
           <p className="grow ml-3">{username}</p>
@@ -30,10 +40,17 @@ const DirectMessagesSidebar = (props: Props) => {
     );
   };
 
+  function handleSidebarTabClick(e: React.MouseEvent, value: number) {
+    setSelectedSidebarTab(value);
+  }
+
   return (
     <Sidebar topBar={<FindChat />}>
       <div className="p-2">
-        <button className="text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500">
+        <button
+          className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${selectedSidebarTab === 0 && "bg-grey-400/10"}`}
+          onClick={(e) => handleSidebarTabClick(e, 0)}
+        >
           <div className="w-8 h-8 flex items-center justify-center">
             <svg
               aria-hidden="true"
@@ -42,10 +59,10 @@ const DirectMessagesSidebar = (props: Props) => {
               height="24"
               viewBox="0 0 24 24"
             >
-              <g fill="none" fill-rule="evenodd">
+              <g fill="none" fillRule="evenodd">
                 <path
                   fill="currentColor"
-                  fill-rule="nonzero"
+                  fillRule="nonzero"
                   d="M0.5,0 L0.5,1.5 C0.5,5.65 2.71,9.28 6,11.3 L6,16 L21,16 L21,14 C21,11.34 15.67,10 13,10 C13,10 12.83,10 12.75,10 C8,10 4,6 4,1.5 L4,0 L0.5,0 Z M13,0 C10.790861,0 9,1.790861 9,4 C9,6.209139 10.790861,8 13,8 C15.209139,8 17,6.209139 17,4 C17,1.790861 15.209139,0 13,0 Z"
                   transform="translate(2 4)"
                 ></path>
@@ -61,7 +78,7 @@ const DirectMessagesSidebar = (props: Props) => {
         </div>
         <ul>
           {dmList.map((dm, index) => (
-            <DMUser key={index} username={"Udochukwu"} />
+            <DMUser key={index} username={"Udochukwu"} index={index + 1} />
           ))}
         </ul>
       </div>

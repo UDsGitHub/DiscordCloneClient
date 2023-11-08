@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Topbar } from "../common/";
+import { Topbar } from "./common";
 
 type Props = {};
 
-const DirectMessagesTopbar = (props: Props) => {
+const FriendsTopbar = (props: Props) => {
   const [currentTab, setCurrentTab] = useState(0);
   return (
     <Topbar>
@@ -17,10 +17,10 @@ const DirectMessagesTopbar = (props: Props) => {
               height="24"
               viewBox="0 0 24 24"
             >
-              <g fill="none" fill-rule="evenodd">
+              <g fill="none" fillRule="evenodd">
                 <path
                   fill="currentColor"
-                  fill-rule="nonzero"
+                  fillRule="nonzero"
                   d="M0.5,0 L0.5,1.5 C0.5,5.65 2.71,9.28 6,11.3 L6,16 L21,16 L21,14 C21,11.34 15.67,10 13,10 C13,10 12.83,10 12.75,10 C8,10 4,6 4,1.5 L4,0 L0.5,0 Z M13,0 C10.790861,0 9,1.790861 9,4 C9,6.209139 10.790861,8 13,8 C15.209139,8 17,6.209139 17,4 C17,1.790861 15.209139,0 13,0 Z"
                   transform="translate(2 4)"
                 ></path>
@@ -33,7 +33,9 @@ const DirectMessagesTopbar = (props: Props) => {
         <div className="bg-grey-400 opacity-10 h-6 w-[1px]"></div>
         <button
           className={`px-2 duration-300 hover:bg-grey-400/10 rounded-md ${
-            currentTab === 0 ? "bg-grey-400/25 font-semibold text-white" : "bg-transparent"
+            currentTab === 0
+              ? "bg-grey-400/25 font-semibold text-white"
+              : "bg-transparent"
           }`}
           onClick={() => setCurrentTab(0)}
         >
@@ -41,7 +43,9 @@ const DirectMessagesTopbar = (props: Props) => {
         </button>
         <button
           className={`px-2 duration-300 hover:bg-grey-400/10 rounded-md ${
-            currentTab === 1 ? "bg-grey-400/25 font-semibold text-white" : "bg-transparent"
+            currentTab === 1
+              ? "bg-grey-400/25 font-semibold text-white"
+              : "bg-transparent"
           }`}
           onClick={() => setCurrentTab(1)}
         >
@@ -55,4 +59,4 @@ const DirectMessagesTopbar = (props: Props) => {
   );
 };
 
-export default DirectMessagesTopbar;
+export default FriendsTopbar;
