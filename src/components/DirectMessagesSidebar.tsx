@@ -11,8 +11,7 @@ type DMUserProps = {
 };
 
 const DirectMessagesSidebar = (props: Props) => {
-  const dmList = [..."udochukwu".toUpperCase()];
-  const { selectedSidebarTab, setSelectedSidebarTab } = useContext(
+  const { selectedSidebarTab, setSelectedSidebarTab, dmList } = useContext(
     DirectMessagesContext
   );
 
@@ -78,7 +77,7 @@ const DirectMessagesSidebar = (props: Props) => {
         </div>
         <ul>
           {dmList.map((dm, index) => (
-            <DMUser key={index} username={"Udochukwu"} index={index + 1} />
+            <DMUser key={index} username={dmList[index]} index={index + 1} />
           ))}
         </ul>
       </div>

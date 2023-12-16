@@ -55,7 +55,7 @@ const Friends = (props: Props) => {
     <>
       <FriendsTopbar />
       <div className="grow flex flex-col px-4 pt-4">
-        <div className="text-grey-400 pl-5 relative">
+        <div className="text-grey-400 pl-4 relative">
           <input
             className="h-8 px-2 outline-none bg-grey-800 w-full rounded-sm"
             type="text"
