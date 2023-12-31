@@ -11,17 +11,13 @@ type DMUserProps = {
 };
 
 const DirectMessagesSidebar = (props: Props) => {
-  const { selectedSidebarTab, setSelectedSidebarTab, dmList } = useContext(
-    DirectMessagesContext
-  );
+  const { selectedSidebarTab, setSelectedSidebarTab, dmList, setDmUser } =
+    useContext(DirectMessagesContext);
 
-  const FindChat = () => {
-    return (
-      <div className="bg-grey-800 text-grey-400 text-sm h-7 px-1.5 flex items-center rounded-md">
-        Find or start a conversation
-      </div>
-    );
-  };
+  function handleSidebarTabClick(e: React.MouseEvent, value: number) {
+    setSelectedSidebarTab(value);
+    setDmUser(dmList[value-1]);
+  }
 
   const DMUser = ({ username, index }: DMUserProps) => {
     return (
@@ -39,15 +35,19 @@ const DirectMessagesSidebar = (props: Props) => {
     );
   };
 
-  function handleSidebarTabClick(e: React.MouseEvent, value: number) {
-    setSelectedSidebarTab(value);
-  }
-
   return (
-    <Sidebar topBar={<FindChat />}>
+    <Sidebar
+      topBar={
+        <div className="bg-grey-800 text-grey-400 text-sm h-7 px-1.5 flex items-center rounded-md">
+          Find or start a conversation
+        </div>
+      }
+    >
       <div className="p-2">
         <button
-          className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${selectedSidebarTab === 0 && "bg-grey-400/10"}`}
+          className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${
+            selectedSidebarTab === 0 && "bg-grey-400/10"
+          }`}
           onClick={(e) => handleSidebarTabClick(e, 0)}
         >
           <div className="w-8 h-8 flex items-center justify-center">

@@ -1,12 +1,12 @@
-import React from 'react'
-import { Topbar } from '.'
+import React from "react";
+import { Topbar } from ".";
 
-type Props = {}
+type Props = {
+  dmUser: string;
+};
 
-const ChatTopbar = (props: Props) => {
-  return (
-    <Topbar>ChatTopbar</Topbar>
-  )
-}
+const ChatTopbar = ({ dmUser }: Props) => {
+  return <Topbar>{dmUser}</Topbar>;
+};
 
-export default ChatTopbar
+export default ChatTopbar;
