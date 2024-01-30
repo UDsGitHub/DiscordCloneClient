@@ -1,5 +1,3 @@
-import { StatusBadge } from "components";
-
 type AvatarProps = {
   profileImg?: any;
   status?: string;
