@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { Topbar } from "./common";
+import { useState } from "react";
+import { Topbar } from "../common";
 
-type Props = {};
-
-const FriendsTopbar = (props: Props) => {
+const FriendsTopbar = () => {
   const [currentTab, setCurrentTab] = useState(0);
   return (
     <Topbar>

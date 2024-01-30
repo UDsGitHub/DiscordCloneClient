@@ -1,1 +1,1 @@
-export { default as DirectMessagesProvider } from "./DirectMessages/DirectMessagesContext";
+export * from './DirectMessages'

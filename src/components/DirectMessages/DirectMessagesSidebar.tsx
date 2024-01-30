@@ -1,35 +1,32 @@
-import React, { useContext } from "react";
-import { UserAvatar, Sidebar } from "./common";
-import { DirectMessagesContext } from "../context/DirectMessages/DirectMessagesContext";
-
-type Props = {};
+import { useContext } from "react";
+import { UserAvatar, Sidebar } from "../common";
+import { DirectMessagesContext } from "../../context/DirectMessages/DirectMessagesContext";
+import { DmUserType } from "../../model";
 
 type DMUserProps = {
-  profileImg?: string;
-  username: string;
-  index: number;
+  user: DmUserType;
 };
 
-const DirectMessagesSidebar = (props: Props) => {
-  const { selectedSidebarTab, setSelectedSidebarTab, dmList, setDmUser } =
-    useContext(DirectMessagesContext);
+const DirectMessagesSidebar = () => {
+  const { selectedSidebarTab, setSelectedSidebarTab, dmUsers } = useContext(
+    DirectMessagesContext
+  );
 
-  function handleSidebarTabClick(e: React.MouseEvent, value: number) {
-    setSelectedSidebarTab(value);
-    setDmUser(dmList[value-1]);
+  function handleSidebarTabClick(id: number) {
+    setSelectedSidebarTab(id);
   }
 
-  const DMUser = ({ username, index }: DMUserProps) => {
+  const DMUser = ({ user }: DMUserProps) => {
     return (
       <li
         className={`hover:bg-grey-500 ${
-          selectedSidebarTab === index && "bg-grey-400/10"
+          selectedSidebarTab === user.id && "bg-grey-400/10"
         } rounded-md text-grey-400 cursor-pointer`}
-        onClick={(e) => handleSidebarTabClick(e, index)}
+        onClick={() => handleSidebarTabClick(user.id)}
       >
-        <button className="px-2 h-[42px] flex items-center ">
+        <button className="px-2 h-[42px] w-full flex items-center ">
           <UserAvatar />
-          <p className="grow ml-3">{username}</p>
+          <p className="grow ml-3 text-left">{user.username}</p>
         </button>
       </li>
     );
@@ -48,7 +45,7 @@ const DirectMessagesSidebar = (props: Props) => {
           className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${
             selectedSidebarTab === 0 && "bg-grey-400/10"
           }`}
-          onClick={(e) => handleSidebarTabClick(e, 0)}
+          onClick={() => handleSidebarTabClick(0)}
         >
           <div className="w-8 h-8 flex items-center justify-center">
             <svg
@@ -76,8 +73,8 @@ const DirectMessagesSidebar = (props: Props) => {
           <button className="text-xl">+</button>
         </div>
         <ul>
-          {dmList.map((dm, index) => (
-            <DMUser key={index} username={dmList[index]} index={index + 1} />
+          {dmUsers.map((dm: DmUserType) => (
+            <DMUser key={dm.id} user={dm} />
           ))}
         </ul>
       </div>

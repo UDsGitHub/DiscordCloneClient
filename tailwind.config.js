@@ -7,6 +7,7 @@ export default {
         "purple-500": "#5865f2",
         "purple-600": "#4752c4",
         "grey-300": "#dbdee1",
+        "grey-350": "#383a40",
         "grey-400": "#b5bac1",
         "grey-500": "#35373c",
         "grey-600": "#313338",

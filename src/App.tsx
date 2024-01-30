@@ -1,4 +1,4 @@
-import { LoginRegister, MainApp } from "./pages";
+import { LoginRegister, MainApp } from "components";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 

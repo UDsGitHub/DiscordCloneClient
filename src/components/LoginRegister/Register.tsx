@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { RequiredText } from "./common";
+import { RequiredText } from "../common";
 import moment from "moment/moment";
 
 type RegisterProps = {

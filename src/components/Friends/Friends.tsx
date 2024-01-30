@@ -1,20 +1,16 @@
-import React from "react";
-import { FriendsTopbar, UserAvatar } from "../../../components";
+import { useContext } from "react";
+import { FriendsTopbar, UserAvatar } from "..";
+import { DirectMessagesContext } from "../../context/DirectMessages/DirectMessagesContext";
 
-type Props = {};
-type FriendListItemProps = {
-  friend: string;
-};
+const Friends = () => {
+  const { dmUsers } = useContext(DirectMessagesContext);
 
-const Friends = (props: Props) => {
-  const friendsList = Array(4).fill("Udochukwu");
-
-  const FriendListItem = ({ friend }: FriendListItemProps) => {
+  const FriendListItem = ({ friend }: any) => {
     return (
       <li className="p-2 hover:bg-grey-400/10 rounded-md flex items-center cursor-pointer">
         <UserAvatar />
         <div className="ml-2">
-          <p className="text-white font-semibold">{friend}</p>
+          <p className="text-white font-semibold">{friend.username}</p>
           <p>Online</p>
         </div>
         <button className="ml-auto h-9 w-9 flex justify-center items-center">
@@ -50,7 +46,6 @@ const Friends = (props: Props) => {
     );
   };
 
-  
   return (
     <>
       <FriendsTopbar />
@@ -84,8 +79,8 @@ const Friends = (props: Props) => {
           ONLINE — 1
         </p>
         <ul className="text-grey-400 invisible-scroll">
-          {friendsList.map((friend, index) => (
-            <FriendListItem friend={friend} key={index} />
+          {dmUsers.map((friend: any) => (
+            <FriendListItem friend={friend} key={friend.id} />
           ))}
         </ul>
       </div>

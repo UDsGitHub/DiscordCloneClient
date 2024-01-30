@@ -1,32 +1,37 @@
-import React, { useState } from "react";
+import { StatusBadge } from "components";
 
 type AvatarProps = {
   profileImg?: any;
   status?: string;
+  size?: 'normal' | 'small';
 };
 
 type StatusBadgeProps = {
   status?: string;
+  size?: "normal" | "small";
 };
 
-const Avatar = ({ profileImg }: AvatarProps) => {
-  const StatusBadge = ({ status }: StatusBadgeProps) => {
+const Avatar = ({ profileImg, size = "normal" }: AvatarProps) => {
+
+  const StatusBadge = ({status, size = "normal"}: StatusBadgeProps) => {
     return (
       <div
-        className={`absolute right-0 bottom-0 bg-green-500 w-3.5 h-3.5 border-2 border-grey-600 rounded-full z-10 font-bold text-center text-xs cursor-default`}
+        className={`absolute -right-0.5 -bottom-0.5 bg-green-500 ${
+          size === "normal" ? "w-3.5 h-3.5" : "w-3 h-3"
+        } border-2 border-grey-600 rounded-full z-10 font-bold text-center text-xs cursor-default`}
       ></div>
     );
   };
 
   return (
     <div
-      className={`relative h-8 w-8 duration-300 flex justify-center items-center bg-purple-500 rounded-full text-white`}
+      className={`relative ${size === 'normal' ? 'h-8 w-8' : 'h-6 w-6'} duration-300 flex justify-center items-center bg-purple-500 rounded-full text-white`}
     >
       {profileImg === undefined ? (
         <svg
           aria-hidden="true"
           role="img"
-          width="22"
+          width={size == "normal" ? 22 : 18}
           height="20"
           viewBox="0 0 28 20"
         >
@@ -38,7 +43,7 @@ const Avatar = ({ profileImg }: AvatarProps) => {
       ) : (
         profileImg
       )}
-      <StatusBadge />
+      <StatusBadge size={size} />
     </div>
   );
 };

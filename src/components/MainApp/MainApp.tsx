@@ -1,5 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
-import { ServerNav} from "../../components";
+import { ServerNav} from "components";
 import { DirectMessages } from "..";
 import { DirectMessagesProvider } from "../../context";
 
