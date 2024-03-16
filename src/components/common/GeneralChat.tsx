@@ -1,7 +1,7 @@
 import { useContext, useRef, useState } from "react";
-import { ChatTopbar } from "..";
-import { DirectMessagesContext } from "../../context/DirectMessages/DirectMessagesContext";
-import { DmUserType } from "../../model";
+import { ChatTopbar, UserAvatar, Message } from "components";
+import { DirectMessagesContext } from "context";
+import { DmUserType } from "model";
 
 type Props = {};
 
@@ -25,7 +25,7 @@ const GeneralChat = (props: Props) => {
   }
 
   function handleSendMessage(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     sendMessage(currentUser);
     setCurrentMessage(currentUser.id, "");
   }
@@ -33,10 +33,33 @@ const GeneralChat = (props: Props) => {
   return (
     <>
       <ChatTopbar dmUser={currentUser} />
-      <div className="text-grey-400">
+      <div className="text-grey-400 p-4">
+        <div className="mb-4">
+          <UserAvatar showStatus={false} size="large" />
+          <p className="text-2xl font-bold text-white">
+            {currentUser.username}
+          </p>
+          <p>
+            This is the beginning of your direct message history with{" "}
+            <span className="text-grey-300">{currentUser.username}</span>
+          </p>
+          <div className="text-sm flex gap-4 items-center mt-4">
+            <p>No servers in common</p>
+            <span className="bg-grey-400/25 w-1 h-1 rounded-full"></span>
+            <div className="flex gap-2">
+              <button className="bg-purple-500 text-white p-0.5 px-3 rounded-sm">
+                Add Friend
+              </button>
+              <button className="bg-red-500 text-white p-0.5 px-3 rounded-sm">
+                Block
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Message List */}
         {currentUser.messageList.map((message, index) => (
-          <p key={index}>{message}</p>
+          <Message key={index} message={message} />
         ))}
       </div>
       <div className="p-4 absolute bottom-0 w-full">

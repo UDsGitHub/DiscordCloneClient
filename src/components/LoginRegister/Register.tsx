@@ -1,224 +1,161 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { motion } from "framer-motion";
-import { RequiredText } from "../common";
-import moment from "moment/moment";
+import { DateSelect, Input } from "components";
+import { useRegisterMutation } from "api";
+import { UserContext } from "context";
+import { useNavigate } from "react-router-dom";
 
 type RegisterProps = {
-  show: boolean;
   toggleForm: () => void;
 };
 
-const Register = ({ show, toggleForm }: RegisterProps) => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+const Register = ({ toggleForm }: RegisterProps) => {
+  const [email, setEmail] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [date, setDate] = useState("");
+  const [register, result] = useRegisterMutation();
+  const { setUser, setIsLoggedIn } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  };
+    const values = {
+      email,
+      username,
+      password,
+      displayName,
+      birthdate: new Date(date),
+    };
 
-  const daysList: (number | string)[] = ["Day"];
-  for (let day = 1; day <= 31; day++) {
-    daysList.push(day);
-  }
-
-  const monthList = [
-    "Month",
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const yearList: (number | string)[] = ["Year"];
-  for (let year = new Date().getFullYear() - 3; year >= 1900; year--) {
-    yearList.push(year);
-  }
-
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-
-  const validateDate = () => {
-    if (day !== "" && month !== "" && year !== "") {
-      let dateString = year + "-" + month + "-" + day;
-      const format = "YYYY-MM-DD";
-      const isValid = moment(dateString, format).isValid();
-      console.log(isValid);
-      return isValid;
+    try {
+      const response = await register(values);
+      if ("data" in response) {
+        console.log(response.data.user);
+        const user = response.data.user;
+        setUser(user);
+        setIsLoggedIn(true);
+        navigate("/channels/@me", { replace: true });
+      }
+    } catch (error) {
+      console.error("Error occurred:", error);
     }
   };
 
-  const validatePassword = (passwordStr: string): boolean => {
+  const validatePassword = (passwordStr: string): string[] => {
+    let errors = [];
     let re = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-    return re.test(passwordStr);
+
+    if (passwordStr.length < 8) {
+      errors.push("password must have at least 8 characters");
+    }
+    if (!re.test(passwordStr)) {
+      errors.push(
+        "Password must consist of at least one number, uppercase letter and symbol"
+      );
+    }
+
+    return errors;
   };
 
-  const handleDayChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setDay(e.target.value);
+  const validateEmail = (emailStr: string): string[] => {
+    let errors = [];
+    let re = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!re.test(emailStr)) {
+      errors.push("Invalid email");
+    }
+    return errors;
   };
-  const handleMonthChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setMonth(e.target.value);
-  };
-  const handleYearChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setYear(e.target.value);
-  };
-
-  useEffect(() => {
-    validateDate();
-  }, [day, month, year]);
 
   return (
-    <>
-      {show && (
-        <motion.div
-          key="register"
-          initial={{ opacity: 0, y: "-100%" }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: "100%" }}
-          transition={{
-            type: "spring",
-            damping: 25,
-            stiffness: 200,
-            duration: 0.5,
-          }}
+    <motion.div
+      key="register"
+      initial={{ opacity: 0, y: "-100%" }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: "100%" }}
+      transition={{
+        type: "spring",
+        damping: 25,
+        stiffness: 200,
+        duration: 0.5,
+      }}
+    >
+      <div className="w-[480px] bg-grey-600 rounded-md p-8 shadow-lg">
+        <form
+          action=""
+          className="text-white text-center"
+          onSubmit={handleSubmit}
         >
-          <div className="w-[480px] bg-grey-600 rounded-md p-8 shadow-lg">
-            <form
-              action=""
-              className="text-white text-center"
-              onSubmit={handleSubmit}
+          <h2 className="text-2xl font-semibold">Create an account</h2>
+          <div className="flex flex-col text-grey-400 text-left">
+            <Input
+              type={"email"}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              label={"EMAIL"}
+              id={"email"}
+              required
+              validator={validateEmail}
+            />
+            <Input
+              type={"text"}
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              label={"DISPLAY NAME"}
+              id={"display_name"}
+              min={2}
+              max={100}
+            />
+            <Input
+              type={"text"}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              label={"USERNAME"}
+              id={"username"}
+              required
+              min={2}
+              max={100}
+            />
+            <Input
+              type={"password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              label={"PASSWORD"}
+              id={"password"}
+              required
+              validator={validatePassword}
+              min={8}
+              max={100}
+            />
+
+            <label htmlFor="birthdate" className="mt-4 mb-2 font-bold text-xs">
+              DATE OF BIRTH
+            </label>
+            <DateSelect onChange={setDate} />
+            <button
+              className="text-white p-4 bg-purple-500 rounded-md mt-6 font-semibold hover:bg-purple-600 duration-200"
+              type="submit"
             >
-              <h2 className="text-2xl font-semibold">Create an account</h2>
-              <div className="flex flex-col text-grey-400 text-left">
-                <label htmlFor="email" className="mt-4 mb-2 font-bold text-xs">
-                  <RequiredText>EMAIL</RequiredText>
-                </label>
-                <input
-                  type="text"
-                  id="email"
-                  required
-                  className="p-2 font-normal outline-none rounded-sm bg-grey-800"
-                />
+              Continue
+            </button>
+            <p className="mt-2 text-xs">
+              By registering, you agree to NotDiscord's{" "}
+              <span className="text-sky-400">Terms of Service </span>
+              and
+              <span className="text-sky-400"> Privacy Policy</span>
+            </p>
 
-                <label htmlFor="email" className="mt-4 mb-2 font-bold text-xs">
-                  DISPLAY NAME
-                </label>
-                <input
-                  type="text"
-                  id="email"
-                  className="p-2 font-normal outline-none rounded-sm bg-grey-800"
-                />
-
-                <label htmlFor="email" className="mt-4 mb-2 font-bold text-xs">
-                  <RequiredText>USERNAME</RequiredText>
-                </label>
-                <input
-                  type="text"
-                  id="email"
-                  required
-                  className="p-2 font-normal outline-none rounded-sm bg-grey-800"
-                />
-
-                <label
-                  htmlFor="password"
-                  className="mt-4 mb-2 font-bold text-xs"
-                >
-                  <RequiredText>PASSWORD</RequiredText>
-                </label>
-                <input
-                  type="text"
-                  id="password"
-                  required
-                  className="p-2 font-normal outline-none rounded-sm bg-grey-800"
-                />
-
-                <label
-                  htmlFor="password"
-                  className="mt-4 mb-2 font-bold text-xs"
-                >
-                  DATE OF BIRTH
-                </label>
-                <div className="flex gap-4">
-                  <select
-                    name="dayOfBirth"
-                    id="dayOfBirth"
-                    className="grow p-2 bg-grey-800 outline-none rounded-sm"
-                    required
-                    value={day}
-                    onChange={handleDayChange}
-                  >
-                    {daysList.map((day, index) => (
-                      <option key={index} value={index !== 0 ? day : undefined}>
-                        {day}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    name="monthOfBirth"
-                    id="monthOfBirth"
-                    required
-                    value={month}
-                    onChange={handleMonthChange}
-                    className="grow p-2 bg-grey-800 outline-none rounded-sm"
-                  >
-                    {monthList.map((month, index) => (
-                      <option
-                        key={index}
-                        value={index !== 0 ? month : undefined}
-                      >
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    name="yearOfBirth"
-                    id="yearOfBirth"
-                    required
-                    value={year}
-                    onChange={handleYearChange}
-                    className="grow p-2 bg-grey-800 outline-none rounded-sm"
-                  >
-                    {yearList.map((year, index) => (
-                      <option
-                        key={index}
-                        value={index !== 0 ? year : undefined}
-                      >
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  className="text-white p-4 bg-purple-500 rounded-md mt-6 font-semibold hover:bg-purple-600 duration-200"
-                  type="submit"
-                >
-                  Continue
-                </button>
-                <p className="mt-2 text-xs">
-                  By registering, you agree to NotDiscord's{" "}
-                  <span className="text-sky-400">Terms of Service </span>
-                  and
-                  <span className="text-sky-400"> Privacy Policy</span>
-                </p>
-
-                <button
-                  className="text-sky-400 hover:underline text-sm text-left mt-4"
-                  onClick={toggleForm}
-                >
-                  Already have an account?
-                </button>
-              </div>
-            </form>
+            <button
+              className="text-sky-400 hover:underline text-sm text-left mt-4"
+              onClick={toggleForm}
+            >
+              Already have an account?
+            </button>
           </div>
-        </motion.div>
-      )}
-    </>
+        </form>
+      </div>
+    </motion.div>
   );
 };
 

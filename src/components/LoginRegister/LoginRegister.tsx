@@ -18,7 +18,7 @@ const LoginRegister = (props: LoginRegisterProps) => {
     if (currentURL === "/login") {
       navigate("/register", { replace: true });
     } else if (currentURL === "/register") {
-      navigate("/login", {replace: true});
+      navigate("/login", { replace: true });
     }
     setLoginVisible((prev) => !prev);
   }
@@ -26,8 +26,11 @@ const LoginRegister = (props: LoginRegisterProps) => {
   return (
     <div className="bg-purple-500 h-full flex justify-center items-center">
       <AnimatePresence>
-        <Login show={loginVisible} toggleForm={toggleForm} />
-        <Register show={!loginVisible} toggleForm={toggleForm} />
+        {loginVisible ? (
+          <Login toggleForm={toggleForm} />
+        ) : (
+          <Register toggleForm={toggleForm} />
+        )}
       </AnimatePresence>
     </div>
   );

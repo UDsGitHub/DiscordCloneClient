@@ -1,17 +1,21 @@
 type AvatarProps = {
   profileImg?: any;
   status?: string;
-  size?: 'normal' | 'small';
+  size?: "large" | "normal" | "small";
+  showStatus?: boolean;
 };
 
 type StatusBadgeProps = {
   status?: string;
-  size?: "normal" | "small";
+  size?: "large" | "normal" | "small";
 };
 
-const Avatar = ({ profileImg, size = "normal" }: AvatarProps) => {
-
-  const StatusBadge = ({status, size = "normal"}: StatusBadgeProps) => {
+const Avatar = ({
+  profileImg,
+  size = "normal",
+  showStatus = true,
+}: AvatarProps) => {
+  const StatusBadge = ({ status, size = "normal" }: StatusBadgeProps) => {
     return (
       <div
         className={`absolute -right-0.5 -bottom-0.5 bg-green-500 ${
@@ -21,16 +25,30 @@ const Avatar = ({ profileImg, size = "normal" }: AvatarProps) => {
     );
   };
 
+  const getAvatarSize = (size: string) => {
+    switch (size) {
+      case "large":
+        return "h-[80px] w-[80px]";
+        break;
+      case "small":
+        return "h-6 w-6";
+      default:
+        return "h-8 w-8";
+    }
+  };
+
   return (
     <div
-      className={`relative ${size === 'normal' ? 'h-8 w-8' : 'h-6 w-6'} duration-300 flex justify-center items-center bg-purple-500 rounded-full text-white`}
+      className={`relative ${getAvatarSize(
+        size
+      )} duration-300 flex justify-center items-center bg-purple-500 rounded-full text-white`}
     >
       {profileImg === undefined ? (
         <svg
           aria-hidden="true"
           role="img"
-          width={size == "normal" ? 22 : 18}
-          height="20"
+          width={size == "large" ? 80 : size == "normal" ? 22 : 18}
+          height={size == "large" ? 40 : 20}
           viewBox="0 0 28 20"
         >
           <path
@@ -41,7 +59,7 @@ const Avatar = ({ profileImg, size = "normal" }: AvatarProps) => {
       ) : (
         profileImg
       )}
-      <StatusBadge size={size} />
+      {showStatus && <StatusBadge size={size} />}
     </div>
   );
 };
