@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { DmUserListType } from "model";
+import { DmUserListType, User } from "model";
 
 export const usersApi = createApi({
   reducerPath: "user",
@@ -8,15 +8,19 @@ export const usersApi = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
+    getUser: builder.query<User, void>({
+      query: () => ({
+        url: "/user/getUser",
+        method: "GET",
+      }),
+    }),
     getDmUsers: builder.query<DmUserListType, string>({
-      query: (currentUserId) => {
-        console.log('inside users api', currentUserId)
-        return {
+      query: (currentUserId) => ({
         url: `/user/getDmUsers/${currentUserId}`,
         method: "GET",
-      }},
+      }),
     }),
   }),
 });
 
-export const { useLazyGetDmUsersQuery } = usersApi;
+export const { useLazyGetUserQuery, useLazyGetDmUsersQuery } = usersApi;

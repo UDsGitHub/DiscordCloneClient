@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { DmUser, DmUserListType, Message, User } from "model";
+import { DmUserListType, Message } from "model";
 import { useLazyGetDmUsersQuery } from "api";
 import { UserContext } from "context";
 
@@ -7,9 +7,7 @@ type DirectMessagesContextType = {
   selectedSidebarTab: string;
   setSelectedSidebarTab: (val: string) => void;
   dmUsers: DmUserListType;
-  setDmUsers: React.Dispatch<
-    React.SetStateAction<Record<string, DmUser> | undefined>
-  >;
+  setDmUsers: React.Dispatch<React.SetStateAction<DmUserListType>>;
   setCurrentMessage: (id: string, currentMessage: string) => void;
   sendMessage: (message: Message) => void;
 };
@@ -32,9 +30,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
   const [getDmUsers, { data: dmUserList, isLoading }] =
     useLazyGetDmUsersQuery();
   const [selectedSidebarTab, setSelectedSidebarTab] = useState("0");
-  const [dmUsers, setDmUsers] = useState<DmUserListType>(
-    dmUserList || {}
-  );
+  const [dmUsers, setDmUsers] = useState<DmUserListType>(dmUserList || {});
 
   function buildDmUserList(data: any) {
     const result: DmUserListType = {};
