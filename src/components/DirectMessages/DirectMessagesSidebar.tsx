@@ -1,28 +1,37 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserAvatar, Sidebar } from "../common";
 import { DirectMessagesContext } from "../../context/DirectMessages/DirectMessagesContext";
-import { DmUserType } from "../../model";
+import { DmUser, DmUserListType } from "model";
 
 type DMUserProps = {
-  user: DmUserType;
+  user: DmUser;
 };
 
 const DirectMessagesSidebar = () => {
   const { selectedSidebarTab, setSelectedSidebarTab, dmUsers } = useContext(
     DirectMessagesContext
   );
+  const [dmUserList, setDmUserList] = useState<DmUserListType>(dmUsers || {});
 
-  function handleSidebarTabClick(id: number) {
+  // console.log(dmUserList);
+
+  useEffect(() => {
+    if (dmUsers) setDmUserList(dmUsers);
+  }, [dmUsers]);
+
+  function handleSidebarTabClick(id: string) {
     setSelectedSidebarTab(id);
   }
 
   const DMUser = ({ user }: DMUserProps) => {
+    console.log(user);
+    
     return (
       <li
         className={`hover:bg-grey-500 ${
-          selectedSidebarTab === user.id && "bg-grey-400/10"
+          selectedSidebarTab === user.userId && "bg-grey-400/10"
         } rounded-md text-grey-400 cursor-pointer`}
-        onClick={() => handleSidebarTabClick(user.id)}
+        onClick={() => handleSidebarTabClick(user.userId)}
       >
         <button className="px-2 h-[42px] w-full flex items-center ">
           <UserAvatar />
@@ -43,9 +52,9 @@ const DirectMessagesSidebar = () => {
       <div className="p-2">
         <button
           className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${
-            selectedSidebarTab === 0 && "bg-grey-400/10"
+            selectedSidebarTab === "0" && "bg-grey-400/10"
           }`}
-          onClick={() => handleSidebarTabClick(0)}
+          onClick={() => handleSidebarTabClick("0")}
         >
           <div className="w-8 h-8 flex items-center justify-center">
             <svg
@@ -73,8 +82,8 @@ const DirectMessagesSidebar = () => {
           <button className="text-xl">+</button>
         </div>
         <ul>
-          {dmUsers.map((dm: DmUserType) => (
-            <DMUser key={dm.id} user={dm} />
+          {Object.keys(dmUserList).map((user: string) => (
+            <DMUser key={user} user={dmUserList[user]} />
           ))}
         </ul>
       </div>

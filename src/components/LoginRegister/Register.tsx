@@ -15,8 +15,8 @@ const Register = ({ toggleForm }: RegisterProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [date, setDate] = useState("");
-  const [register, result] = useRegisterMutation();
-  const { setUser, setIsLoggedIn } = useContext(UserContext);
+  const [register] = useRegisterMutation();
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -35,7 +35,6 @@ const Register = ({ toggleForm }: RegisterProps) => {
         console.log(response.data.user);
         const user = response.data.user;
         setUser(user);
-        setIsLoggedIn(true);
         navigate("/channels/@me", { replace: true });
       }
     } catch (error) {

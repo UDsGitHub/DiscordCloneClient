@@ -1,5 +1,5 @@
 export type User = {
-  id: number;
+  id: string;
   email: string;
   displayName: string;
   username: string;
@@ -7,7 +7,13 @@ export type User = {
   birthdate: string;
 };
 
-export type DmUserType = User & {
-  currentMessage: string;
-  messageList: string[];
+export type DecodedJWT = {
+  id: string;
+  email: string;
+  displayName: string;
+  username: string;
+  birthdate: string;
+  password: string;
+  exp: number;
+  iat: number;
 };

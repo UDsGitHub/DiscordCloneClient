@@ -9,7 +9,7 @@ const DirectMessages = () => {
     <>
       <DirectMessagesSidebar />
       <div className="grow flex flex-col relative">
-        {selectedSidebarTab === 0 ? <Friends /> : <GeneralChat />}
+        {selectedSidebarTab === "0" ? <Friends /> : <GeneralChat />}
       </div>
     </>
   );

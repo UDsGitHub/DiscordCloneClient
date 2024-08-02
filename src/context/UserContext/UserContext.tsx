@@ -4,9 +4,7 @@ import { User } from "model";
 type UserContextType = {
   user: User | undefined,
   setUser: (user: User | undefined) => any;
-  isLoggedIn: boolean;
-  setIsLoggedIn: (value: boolean) => any;
-  logout: (username: string) => any;
+  logout: () => any;
 };
 
 type UserProviderProps = {
@@ -16,24 +14,21 @@ type UserProviderProps = {
 export const UserContext = createContext<UserContextType>({
   user: undefined,
   setUser: () => {},
-  isLoggedIn: false,
-  setIsLoggedIn: () => {},
   logout: () => {},
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | undefined>(undefined)
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  function logout(username: string) {}
+  function logout() {
+    setUser(undefined);
+  }
 
   return (
     <UserContext.Provider
       value={{
         user,
         setUser,
-        isLoggedIn,
-        setIsLoggedIn,
         logout
       }}
     >

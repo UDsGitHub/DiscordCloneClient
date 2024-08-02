@@ -10,11 +10,11 @@ type LoginProps = {
 };
 
 const Login = ({ toggleForm }: LoginProps) => {
-  const [login, result] = useLoginMutation();
+  const [login] = useLoginMutation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { setUser, setIsLoggedIn } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,7 +29,6 @@ const Login = ({ toggleForm }: LoginProps) => {
         console.log(response.data.user);
         const user = response.data.user;
         setUser(user);
-        setIsLoggedIn(true);
         navigate("/channels/@me", { replace: true });
       }
     } catch (error) {

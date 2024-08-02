@@ -1,8 +1,8 @@
 import { Topbar, UserAvatar } from "components";
-import { DmUserType } from "model";
+import { DmUser } from "model";
 
 type Props = {
-  dmUser: DmUserType;
+  dmUser: DmUser;
 };
 
 const ChatTopbar = ({ dmUser }: Props) => {

@@ -79,8 +79,8 @@ const Friends = () => {
           ONLINE — 1
         </p>
         <ul className="text-grey-400 invisible-scroll">
-          {dmUsers.map((friend: any) => (
-            <FriendListItem friend={friend} key={friend.id} />
+          {Object.keys(dmUsers).map((friend: string) => (
+            <FriendListItem friend={dmUsers[friend]} key={friend} />
           ))}
         </ul>
       </div>
