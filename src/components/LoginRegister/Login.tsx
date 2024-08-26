@@ -1,20 +1,21 @@
-import React, { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "components";
 import { useLoginMutation } from "api";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "context";
+import { ToastContext, UserContext } from "context";
 
 type LoginProps = {
   toggleForm: () => void;
 };
 
 const Login = ({ toggleForm }: LoginProps) => {
-  const [login] = useLoginMutation();
+  const [login, error] = useLoginMutation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
+  const { showToast } = useContext(ToastContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,16 +24,18 @@ const Login = ({ toggleForm }: LoginProps) => {
       password,
     };
 
-    try {
-      const response = await login(values);
-      if ("data" in response) {
-        console.log(response.data.user);
-        const user = response.data.user;
-        setUser(user);
-        navigate("/channels/@me", { replace: true });
+    const response = await login(values);
+    if ("data" in response) {
+      const user = response.data.user;
+      setUser(user);
+      navigate("/channels/@me", { replace: true });
+    } else if ("error" in response) {
+      const error = response.error;
+      if ("data" in error) {
+        showToast(error.data as string);
+      } else {
+        showToast("Error occured");
       }
-    } catch (error) {
-      console.error("Error occurred:", error);
     }
   };
 

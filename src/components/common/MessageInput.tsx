@@ -4,10 +4,12 @@ import { DirectMessagesContext } from "context";
 
 type Props = {
   currentUser: DmUser;
+  handleSendMessage: (message: string) => void;
 };
 
-const MessageInput = ({ currentUser }: Props) => {
-  const { setCurrentMessage, sendMessage } = useContext(DirectMessagesContext);
+const MessageInput = ({ currentUser, handleSendMessage }: Props) => {
+  const { setCurrentMessage } = useContext(DirectMessagesContext);
+  const [messageValue, setMessageValue] = useState<string>(currentUser.currentMessage || "");
   const inputRef = useRef<HTMLInputElement>(null);
   const [showOutline, setShowOutline] = useState(false);
 
@@ -16,10 +18,11 @@ const MessageInput = ({ currentUser }: Props) => {
     setShowOutline(true);
   }
 
-  function handleSendMessage(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    sendMessage(currentUser);
+    handleSendMessage(messageValue);
     setCurrentMessage(currentUser.userId, "");
+    setMessageValue('');
   }
 
   return (
@@ -31,15 +34,16 @@ const MessageInput = ({ currentUser }: Props) => {
       tabIndex={0}
       onFocus={handleFormFocus}
       onChange={() => setShowOutline(false)}
-      onSubmit={(e) => handleSendMessage(e)}
+      onSubmit={(e) => handleSubmit(e)}
     >
       <input
         ref={inputRef}
         type="text"
         placeholder={`Message @${currentUser.username}`}
         className="bg-transparent w-full outline-none text-grey-400"
-        value={currentUser?.currentMessage}
-        onChange={(e) => setCurrentMessage(currentUser.id, e.target.value)}
+        value={messageValue}
+        onChange={(e) => setMessageValue(e.target.value)}
+        onBlur={(e) => setCurrentMessage(currentUser.userId, e.target.value)}
       />
       <button type="submit">
         <svg

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DmUserListType, Message } from "model";
-import { useLazyGetDmUsersQuery } from "api";
+import { useLazyGetDmUsersQuery, useSendMessageToUserMutation } from "api";
 import { UserContext } from "context";
 
 type DirectMessagesContextType = {
@@ -31,6 +31,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
     useLazyGetDmUsersQuery();
   const [selectedSidebarTab, setSelectedSidebarTab] = useState("0");
   const [dmUsers, setDmUsers] = useState<DmUserListType>(dmUserList || {});
+  const [sendMessageToUser] = useSendMessageToUserMutation();
 
   function buildDmUserList(data: any) {
     const result: DmUserListType = {};
@@ -38,7 +39,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
       result[key] = {
         userId: data[key].userId,
         username: data[key].username,
-        currentMessage: undefined,
+        currentMessage: '',
         messageList: data[key].messageList,
       };
     }
@@ -49,26 +50,16 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
     if (user) {
       getDmUsers(user.id).then((res) => buildDmUserList(res.data));
     }
-  }, [user]);
+  }, [user, dmUserList]);
 
   function sendMessage(message: Message) {
-    // setDmUsers((prevUsers) => {
-    //   // Find the index of the user in the array
-    //   const toUser = prevUsers ? prevUsers[toId] : undefined;
-    //   if (user && toUser) {
-    //     // Clone the previous state and update the selected user's currentMessage
-    //     const newMessage = {
-    //       fromId: user.id,
-    //       toId: toId,
-    //       message
-    //     }
-    //     toUser.messageList = [
-    //       ...toUser.messageList,
-    //       message,
-    //     ];
-    //   }
-    //   return prevUsers;
-    // });
+    if (user) {
+      sendMessageToUser({
+        userId: user.id,
+        toUserId: message.toId,
+        message: message.message,
+      });
+    }
   }
 
   function setCurrentMessage(id: string, currentMessage: string) {
@@ -77,7 +68,6 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
       const user = prevUsers ? prevUsers[id] : undefined;
       if (user) {
         // Clone the previous state and update the selected user's currentMessage
-
         user.currentMessage = currentMessage;
       }
       return prevUsers;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Login, Register } from "../../components";
-import { useLocation, Navigate, useNavigate } from "react-router-dom";
+import { Login, Register } from "components";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type LoginRegisterProps = {};
 
@@ -9,7 +9,6 @@ const LoginRegister = (props: LoginRegisterProps) => {
   let navigate = useNavigate();
   const location = useLocation();
   const currentURL = location.pathname;
-  console.log(currentURL);
   const [loginVisible, setLoginVisible] = useState(
     currentURL === "/login" ? true : false
   );

@@ -30,3 +30,29 @@ select::-webkit-scrollbar-thumb {
 .invisible-scroll::-webkit-scrollbar-thumb {
   background-color: transparent;
 }
+
+.main-chat-area {
+  height: calc(100% - 40px - 56px - 1rem);
+}
+
+.main-chat-area::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.main-chat-area::-webkit-scrollbar-track {
+  background: #2b2d31;
+}
+
+/* Handle */
+.main-chat-area::-webkit-scrollbar-thumb {
+  background: #1a1b1e;
+  border-radius: 5px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  @apply py-2 px-4 rounded-md;
+}

@@ -2,7 +2,7 @@ import { FormEvent, useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { DateSelect, Input } from "components";
 import { useRegisterMutation } from "api";
-import { UserContext } from "context";
+import { ToastContext, UserContext } from "context";
 import { useNavigate } from "react-router-dom";
 
 type RegisterProps = {
@@ -18,6 +18,7 @@ const Register = ({ toggleForm }: RegisterProps) => {
   const [register] = useRegisterMutation();
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const { showToast } = useContext(ToastContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,16 +30,18 @@ const Register = ({ toggleForm }: RegisterProps) => {
       birthdate: new Date(date),
     };
 
-    try {
-      const response = await register(values);
-      if ("data" in response) {
-        console.log(response.data.user);
-        const user = response.data.user;
-        setUser(user);
-        navigate("/channels/@me", { replace: true });
+    const response = await register(values);
+    if ("data" in response) {
+      const user = response.data.user;
+      setUser(user);
+      navigate("/channels/@me", { replace: true });
+    } else if ("error" in response) {
+      const error = response.error;
+      if ("data" in error) {
+        showToast(error.data as string);
+      } else {
+        showToast("Error occured");
       }
-    } catch (error) {
-      console.error("Error occurred:", error);
     }
   };
 

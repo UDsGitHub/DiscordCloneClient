@@ -1,20 +1,39 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ServerNav } from "components";
 import { DirectMessages } from "..";
-import { DirectMessagesProvider } from "context";
-import { useContext } from "react";
-import { UserContext } from "context";
+import { UserContext, SocketContext, SocketProvider, DirectMessagesProvider } from "context";
+import { useContext, useEffect } from "react";
 
 type ServersProps = {};
 
 const MainApp = (props: ServersProps) => {
   const { userId } = useParams();
   const { user, fetchingUser } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
 
   if (!fetchingUser && !user) {
     navigate("/login", { replace: true });
   }
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("connect", () => {
+        console.log("Connected to socket server");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from socket server");
+      });
+
+      // Clean up the effect
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
+      };
+    }
+  
+  }, []);
 
   // Use a default value if userId is not provided
   const actualUserId = userId || "@me";
@@ -25,14 +44,16 @@ const MainApp = (props: ServersProps) => {
   }
 
   return (
-    <DirectMessagesProvider>
-      <div className="h-full flex">
-        <ServerNav />
-        <main className="grow flex bg-grey-600">
-          <DirectMessages />
-        </main>
-      </div>
-    </DirectMessagesProvider>
+    <SocketProvider>
+      <DirectMessagesProvider>
+        <div className="h-full flex">
+          <ServerNav />
+          <main className="grow flex bg-grey-600">
+            <DirectMessages />
+          </main>
+        </div>
+      </DirectMessagesProvider>
+    </SocketProvider>
   );
 };
 

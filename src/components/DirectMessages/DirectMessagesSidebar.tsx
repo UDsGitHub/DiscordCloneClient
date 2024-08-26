@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserAvatar, Sidebar } from "../common";
 import { DirectMessagesContext } from "../../context/DirectMessages/DirectMessagesContext";
 import { DmUser, DmUserListType } from "model";
+import { SocketContext } from "context";
 
 type DMUserProps = {
   user: DmUser;
@@ -11,9 +12,8 @@ const DirectMessagesSidebar = () => {
   const { selectedSidebarTab, setSelectedSidebarTab, dmUsers } = useContext(
     DirectMessagesContext
   );
+  const { socket } = useContext(SocketContext);
   const [dmUserList, setDmUserList] = useState<DmUserListType>(dmUsers || {});
-
-  // console.log(dmUserList);
 
   useEffect(() => {
     if (dmUsers) setDmUserList(dmUsers);
@@ -21,11 +21,16 @@ const DirectMessagesSidebar = () => {
 
   function handleSidebarTabClick(id: string) {
     setSelectedSidebarTab(id);
+    if (socket) {
+      if (selectedSidebarTab !== "0") {
+        socket.emit("join_room", { room: id });
+      } else {
+        socket.emit("leave_room", { room: id });
+      }
+    }
   }
 
   const DMUser = ({ user }: DMUserProps) => {
-    console.log(user);
-    
     return (
       <li
         className={`hover:bg-grey-500 ${

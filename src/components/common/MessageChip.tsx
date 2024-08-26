@@ -5,7 +5,7 @@ type Props = {
   message: string;
 };
 
-const Message = ({ profileImg, message }: Props) => {
+const MessageChip = ({ profileImg, message }: Props) => {
   return (
     <div className="flex items-center gap-4 text-white mb-2">
       {profileImg ? (
@@ -21,4 +21,4 @@ const Message = ({ profileImg, message }: Props) => {
   );
 };
 
-export default Message;
+export default MessageChip;

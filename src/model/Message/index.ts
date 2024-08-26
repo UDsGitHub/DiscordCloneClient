@@ -1,5 +1,5 @@
 export type Message = {
-  id: string;
+  id?: string;
   fromId: string;
   toId: string;
   message: string;
@@ -11,6 +11,12 @@ export type DmUser = {
     username: string;
     currentMessage?: string;
     messageList: Array<Message>;
+}
+
+export type SendMessageToUserRequest = {
+  userId: string;
+  toUserId: string;
+  message: string;
 }
 
 export type DmUserListType = Record<string, DmUser>;
