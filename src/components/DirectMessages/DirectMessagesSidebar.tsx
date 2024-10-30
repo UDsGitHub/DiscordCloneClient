@@ -57,7 +57,7 @@ const DirectMessagesSidebar = () => {
       <div className="p-2">
         <button
           className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${
-            selectedSidebarTab === "0" && "bg-grey-400/10"
+            selectedSidebarTab === "0" && "bg-grey-400/10 text-white"
           }`}
           onClick={() => handleSidebarTabClick("0")}
         >

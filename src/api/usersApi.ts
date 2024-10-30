@@ -34,4 +34,4 @@ export const usersApi = createApi({
   }),
 });
 
-export const { useLazyGetUserQuery, useLazyGetDmUsersQuery, useSendMessageToUserMutation } = usersApi;
+export const { useGetUserQuery, useLazyGetDmUsersQuery, useSendMessageToUserMutation } = usersApi;

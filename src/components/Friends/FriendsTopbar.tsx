@@ -1,10 +1,13 @@
-import { useState } from "react";
-import { Topbar } from "../common";
+import { TopbarLayout } from "components";
 
-const FriendsTopbar = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+interface Props {
+  currentTab: number;
+  onTabChange: (tabId: number) => void;
+}
+
+const FriendsTopbar = ({ currentTab, onTabChange }: Props) => {
   return (
-    <Topbar>
+    <TopbarLayout>
       <div className="flex items-center gap-2 text-grey-400">
         <div className="px-2 flex items-center rounded-md cursor-default">
           <div className="w-6 h-6 flex items-center justify-center">
@@ -35,7 +38,7 @@ const FriendsTopbar = () => {
               ? "bg-grey-400/25 font-semibold text-white"
               : "bg-transparent"
           }`}
-          onClick={() => setCurrentTab(0)}
+          onClick={() => onTabChange(0)}
         >
           Online
         </button>
@@ -45,15 +48,23 @@ const FriendsTopbar = () => {
               ? "bg-grey-400/25 font-semibold text-white"
               : "bg-transparent"
           }`}
-          onClick={() => setCurrentTab(1)}
+          onClick={() => onTabChange(1)}
         >
           All
         </button>
-        <button className="bg-green-700 hover:bg-green-800 duration-300 text-white py-0.5 px-2 shadow-sm rounded-md">
+        <button
+          className={`duration-300 py-0.5 px-2 shadow-sm rounded-md
+            ${
+              currentTab === 2
+                ? "bg-transparent outline outline-green-700 outline-2 font-semibold text-green-400"
+                : "bg-green-700 hover:bg-green-800 text-white"
+            }`}
+          onClick={() => onTabChange(2)}
+        >
           Add Friend
         </button>
       </div>
-    </Topbar>
+    </TopbarLayout>
   );
 };
 
