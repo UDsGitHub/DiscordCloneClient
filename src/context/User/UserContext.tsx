@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { User } from "model";
-import { useLazyGetUserQuery } from "api";
+import { useGetUserQuery } from "api";
 
 type UserContextType = {
   user: User | undefined;
@@ -21,24 +21,14 @@ export const UserContext = createContext<UserContextType>({
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
-  const [getUser, { data: userData, isLoading: fetchingUser }] =
-    useLazyGetUserQuery();
+  const { data: userData, isLoading: fetchingUser } = useGetUserQuery();
   const [user, setUser] = useState<User | undefined>(userData);
 
-  useEffect(() => {
-    if (!user) {
-      getUser()
-        .then((res: any) => {
-          if (res.data !== null || res.data !== undefined) {
-            setUser(res.data);
-          }
-        })
-        .catch((e: any) => {
-          console.log(e);
-          setUser(undefined);
-        });
+  useEffect(() => {  
+    if (!fetchingUser && userData !== undefined) {
+      setUser(userData);
     }
-  }, [user]);
+  }, [userData, fetchingUser]);
 
   function logout() {
     setUser(undefined);

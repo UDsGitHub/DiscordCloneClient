@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "components";
 import { useLoginMutation } from "api";
@@ -14,7 +14,7 @@ const Login = ({ toggleForm }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const { showToast } = useContext(ToastContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

@@ -1,7 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ServerNav } from "components";
 import { DirectMessages } from "..";
-import { UserContext, SocketContext, SocketProvider, DirectMessagesProvider } from "context";
+import {
+  UserContext,
+  SocketContext,
+  SocketProvider,
+  DirectMessagesProvider,
+} from "context";
 import { useContext, useEffect } from "react";
 
 type ServersProps = {};
@@ -12,9 +17,13 @@ const MainApp = (props: ServersProps) => {
   const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
 
-  if (!fetchingUser && !user) {
-    navigate("/login", { replace: true });
-  }
+  useEffect(() => {
+    console.log(user);
+    
+    if (!fetchingUser && !user) {  
+      navigate("/login", { replace: true });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (socket) {
@@ -32,7 +41,6 @@ const MainApp = (props: ServersProps) => {
         socket.off("disconnect");
       };
     }
-  
   }, []);
 
   // Use a default value if userId is not provided

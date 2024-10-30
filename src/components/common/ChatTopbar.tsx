@@ -1,4 +1,4 @@
-import { Topbar, UserAvatar } from "components";
+import { TopbarLayout, UserAvatar } from "components";
 import { DmUser } from "model";
 
 type Props = {
@@ -7,12 +7,12 @@ type Props = {
 
 const ChatTopbar = ({ dmUser }: Props) => {
   return (
-    <Topbar>
+    <TopbarLayout>
       <div className="mx-2">
         <UserAvatar size="small" />
       </div>
       {dmUser.username}
-    </Topbar>
+    </TopbarLayout>
   );
 };
 

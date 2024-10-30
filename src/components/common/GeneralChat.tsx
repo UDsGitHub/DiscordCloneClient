@@ -13,10 +13,8 @@ const GeneralChat = (props: Props) => {
   const currentDmUser = dmUsers
     ? dmUsers[selectedSidebarTab]
     : dmUsers[Object.keys(dmUsers)[0]];
-  const inputRef = useRef<HTMLInputElement>(null);
   const scrollableRef = useRef<HTMLDivElement>(null);
   const { user } = useContext(UserContext);
-  const [showOutline, setShowOutline] = useState(false);
   const [messageList, setMessageList] = useState<Message[]>(
     currentDmUser?.messageList || []
   );
