@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Login, Register } from "components";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "context";
 
 type LoginRegisterProps = {};
 
@@ -12,6 +13,13 @@ const LoginRegister = (props: LoginRegisterProps) => {
   const [loginVisible, setLoginVisible] = useState(
     currentURL === "/login" ? true : false
   );
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/channels/@me", { replace: true });
+    }
+  }, [user]);
 
   function toggleForm() {
     if (currentURL === "/login") {

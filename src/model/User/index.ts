@@ -17,3 +17,23 @@ export type DecodedJWT = {
   exp: number;
   iat: number;
 };
+
+export interface FriendUser {
+  user: User;
+}
+
+export interface FriendRequest extends FriendUser {
+  direction: FriendRequestDirection,
+  status: FriendRequestStatus
+}
+
+export enum FriendRequestDirection {
+  outgoing,
+  incoming
+}
+
+export enum FriendRequestStatus {
+  pending,
+  accepted,
+  denied
+}

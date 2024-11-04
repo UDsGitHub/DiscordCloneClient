@@ -17,15 +17,28 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    if (!socket) {
-      const serverSocket = io("http://localhost:3000/");
-      setSocket(serverSocket);
-  
-      return () => {
-        serverSocket.close();
-      };
-    }
-  }, [socket]);
+    const serverSocket = io("http://localhost:3000", {
+      transports: ["websocket"],
+    });
+
+    serverSocket.on("connect", () => {
+      console.log("Connected to server", serverSocket.id);
+    });
+
+    serverSocket.on("connect_error", (err) => {
+      console.error("Connection error:", err.message);
+    });
+
+    serverSocket.on("disconnect", () => {
+      console.warn("Disconnected from server");
+    });
+
+    setSocket(serverSocket);
+
+    return () => {
+      serverSocket.close();
+    };
+  }, []);
 
   return (
     <SocketContext.Provider

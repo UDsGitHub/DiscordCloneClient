@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { User } from "model";
 import { useGetUserQuery } from "api";
+import { PageLoader } from "components";
 
 type UserContextType = {
   user: User | undefined;
@@ -21,17 +22,23 @@ export const UserContext = createContext<UserContextType>({
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
-  const { data: userData, isLoading: fetchingUser } = useGetUserQuery();
+  const { data: userData, isFetching: fetchingUser } = useGetUserQuery();
   const [user, setUser] = useState<User | undefined>(userData);
 
-  useEffect(() => {  
-    if (!fetchingUser && userData !== undefined) {
+
+  useEffect(() => {
+    if (userData) {
       setUser(userData);
     }
-  }, [userData, fetchingUser]);
+  }, [userData])
+  
 
   function logout() {
     setUser(undefined);
+  }
+
+  if (fetchingUser) {
+    return <PageLoader />
   }
 
   return (

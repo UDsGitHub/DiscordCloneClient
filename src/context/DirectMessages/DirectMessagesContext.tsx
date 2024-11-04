@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { DmUserListType, Message } from "model";
+import { DmUser, DmUserListType, Message } from "model";
 import { useLazyGetDmUsersQuery, useSendMessageToUserMutation } from "api";
-import { UserContext } from "context";
+import { SocketContext, UserContext } from "context";
 
 type DirectMessagesContextType = {
   selectedSidebarTab: string;
-  setSelectedSidebarTab: (val: string) => void;
+  handleSidebarSelect: (id: string) => void;
   dmUsers: DmUserListType;
-  setDmUsers: React.Dispatch<React.SetStateAction<DmUserListType>>;
+  updateDMUsers: (dmUser: DmUser) => void;
   setCurrentMessage: (id: string, currentMessage: string) => void;
   sendMessage: (message: Message) => void;
 };
@@ -19,16 +19,16 @@ type DirectMessagesProviderProps = {
 export const DirectMessagesContext = createContext<DirectMessagesContextType>({
   selectedSidebarTab: "0",
   dmUsers: {},
-  setSelectedSidebarTab: () => {},
-  setDmUsers: () => {},
+  handleSidebarSelect: () => {},
+  updateDMUsers: () => {},
   setCurrentMessage: () => {},
   sendMessage: () => {},
 });
 
 const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
   const { user } = useContext(UserContext);
-  const [getDmUsers, { data: dmUserList, isLoading }] =
-    useLazyGetDmUsersQuery();
+  const { socket } = useContext(SocketContext);
+  const [getDmUsers, { data: dmUserList }] = useLazyGetDmUsersQuery();
   const [selectedSidebarTab, setSelectedSidebarTab] = useState("0");
   const [dmUsers, setDmUsers] = useState<DmUserListType>(dmUserList || {});
   const [sendMessageToUser] = useSendMessageToUserMutation();
@@ -39,7 +39,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
       result[key] = {
         userId: data[key].userId,
         username: data[key].username,
-        currentMessage: '',
+        currentMessage: "",
         messageList: data[key].messageList,
       };
     }
@@ -48,14 +48,25 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
 
   useEffect(() => {
     if (user) {
-      getDmUsers(user.id).then((res) => buildDmUserList(res.data));
+      getDmUsers().then((res) => buildDmUserList(res.data));
     }
-  }, [user, dmUserList]);
+  }, [user]);
+
+  function handleSidebarSelect(id: string) {
+    setSelectedSidebarTab(id);
+    
+    if (socket) {
+      if (id !== "0") {
+        socket.emit("join_room", { room: id });
+      } else {
+        socket.emit("leave_room", { room: selectedSidebarTab });
+      }
+    }
+  }
 
   function sendMessage(message: Message) {
     if (user) {
       sendMessageToUser({
-        userId: user.id,
         toUserId: message.toId,
         message: message.message,
       });
@@ -64,26 +75,28 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
 
   function setCurrentMessage(id: string, currentMessage: string) {
     setDmUsers((prevUsers) => {
-      // Find the index of the user in the array
       const user = prevUsers ? prevUsers[id] : undefined;
       if (user) {
-        // Clone the previous state and update the selected user's currentMessage
         user.currentMessage = currentMessage;
       }
       return prevUsers;
     });
   }
 
-  // TODO create a table called messages that has different columns for whatever info is needed about a message... eg, the from userId, the to userId, the text in the message
-  // the links to the images in the message,... etc.
+  function updateDMUsers(dmUser: DmUser) {
+    if (!Object.keys(dmUsers).includes(dmUser.userId)) {
+      setDmUsers(prevState => ({...prevState, [dmUser.userId]: dmUser}));
+      handleSidebarSelect(dmUser.userId)
+    }
+  }
 
   return (
     <DirectMessagesContext.Provider
       value={{
         selectedSidebarTab,
-        setSelectedSidebarTab,
+        handleSidebarSelect,
         dmUsers,
-        setDmUsers,
+        updateDMUsers,
         setCurrentMessage,
         sendMessage,
       }}

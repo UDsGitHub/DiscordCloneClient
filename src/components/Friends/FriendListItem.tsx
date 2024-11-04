@@ -1,49 +1,100 @@
-import { UserAvatar } from "components";
-import { DmUser } from 'model';
+import { useUnFriendMutation } from "api";
+import { Tooltip, UserAvatar } from "components";
+import { DirectMessagesContext, ToastContext } from "context";
+import { DmUser, User } from "model";
+import { useContext } from "react";
 
 type Props = {
-    friend: DmUser
-}
+  friend: User;
+};
 
-const FriendListItem = ({friend}: Props) => {
+const FriendListItem = ({ friend }: Props) => {
+  const { showToast } = useContext(ToastContext);
+  const { dmUsers, updateDMUsers, handleSidebarSelect } = useContext(DirectMessagesContext);
+  const [unfriend] = useUnFriendMutation();
+  const buttonStyles =
+    "h-9 w-9 bg-grey-700 rounded-full duration-300 hover:bg-grey-800 hover:text-white flex justify-center items-center";
+
+  const unFriendUser = () => {
+    unfriend(friend.id)
+      .unwrap()
+      .catch((e) => {
+        if ("status" in e && e.status >= 400) {
+          showToast(e.data.message);
+        }
+      });
+  };
+
+  const startDirectMessage = () => {
+    if (Object.keys(dmUsers).includes(friend.id)) {
+      return handleSidebarSelect(friend.id)
+    }
+    const dmUser: DmUser = {
+      userId: friend.id,
+      username: friend.username,
+      currentMessage: undefined,
+      messageList: [],
+    };
+    updateDMUsers(dmUser);
+  };
+
   return (
     <li className="p-2 hover:bg-grey-400/10 rounded-md flex items-center cursor-pointer">
       <UserAvatar />
-      <div className="ml-2">
+      <div className="ml-2 flex-1">
         <p className="text-white font-semibold">{friend.username}</p>
         <p>Online</p>
       </div>
-      <button className="ml-auto h-9 w-9 flex justify-center items-center">
-        <svg
-          aria-hidden="true"
-          role="img"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path
-            fill="currentColor"
-            d="M4.79805 3C3.80445 3 2.99805 3.8055 2.99805 4.8V15.6C2.99805 16.5936 3.80445 17.4 4.79805 17.4H7.49805V21L11.098 17.4H19.198C20.1925 17.4 20.998 16.5936 20.998 15.6V4.8C20.998 3.8055 20.1925 3 19.198 3H4.79805Z"
-          ></path>
-        </svg>
-      </button>
-      <button className="ml-2 h-9 w-9 flex justify-center items-center">
-        <svg
-          aria-hidden="true"
-          role="img"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="currentColor"
-            d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"
-          ></path>
-        </svg>
-      </button>
+      <div className="flex gap-2 justify-center items-center">
+        <Tooltip text="Message" direction="top">
+          <button
+            className={`${buttonStyles}`}
+            aria-label="message user"
+            onClick={startDirectMessage}
+          >
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 22a10 10 0 1 0-8.45-4.64c.13.19.11.44-.04.61l-2.06 2.37A1 1 0 0 0 2.2 22H12Z"
+              ></path>
+            </svg>
+          </button>
+        </Tooltip>
+        <Tooltip text="Unfriend" direction="top">
+          <button
+            className={`${buttonStyles}`}
+            onClick={unFriendUser}
+            aria-label="remove friend"
+          >
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M17.3 18.7a1 1 0 0 0 1.4-1.4L13.42 12l5.3-5.3a1 1 0 0 0-1.42-1.4L12 10.58l-5.3-5.3a1 1 0 0 0-1.4 1.42L10.58 12l-5.3 5.3a1 1 0 1 0 1.42 1.4L12 13.42l5.3 5.3Z"
+              ></path>
+            </svg>
+          </button>
+        </Tooltip>
+      </div>
     </li>
   );
-}
+};
 
-export default FriendListItem
+export default FriendListItem;
