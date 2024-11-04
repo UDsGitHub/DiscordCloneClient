@@ -1,34 +1,17 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo } from "react";
 import { UserAvatar, Sidebar } from "../common";
-import { DirectMessagesContext } from "../../context/DirectMessages/DirectMessagesContext";
-import { DmUser, DmUserListType } from "model";
-import { SocketContext } from "context";
+import { DirectMessagesContext } from "context";
+import { DmUser } from "model";
 
 type DMUserProps = {
   user: DmUser;
 };
 
 const DirectMessagesSidebar = () => {
-  const { selectedSidebarTab, setSelectedSidebarTab, dmUsers } = useContext(
+  const { selectedSidebarTab, handleSidebarSelect, dmUsers } = useContext(
     DirectMessagesContext
   );
-  const { socket } = useContext(SocketContext);
-  const [dmUserList, setDmUserList] = useState<DmUserListType>(dmUsers || {});
-
-  useEffect(() => {
-    if (dmUsers) setDmUserList(dmUsers);
-  }, [dmUsers]);
-
-  function handleSidebarTabClick(id: string) {
-    setSelectedSidebarTab(id);
-    if (socket) {
-      if (selectedSidebarTab !== "0") {
-        socket.emit("join_room", { room: id });
-      } else {
-        socket.emit("leave_room", { room: id });
-      }
-    }
-  }
+  const dmUserList = useMemo(() => dmUsers || {}, [dmUsers])
 
   const DMUser = ({ user }: DMUserProps) => {
     return (
@@ -36,7 +19,7 @@ const DirectMessagesSidebar = () => {
         className={`hover:bg-grey-500 ${
           selectedSidebarTab === user.userId && "bg-grey-400/10"
         } rounded-md text-grey-400 cursor-pointer`}
-        onClick={() => handleSidebarTabClick(user.userId)}
+        onClick={() => handleSidebarSelect(user.userId)}
       >
         <button className="px-2 h-[42px] w-full flex items-center ">
           <UserAvatar />
@@ -59,7 +42,7 @@ const DirectMessagesSidebar = () => {
           className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${
             selectedSidebarTab === "0" && "bg-grey-400/10 text-white"
           }`}
-          onClick={() => handleSidebarTabClick("0")}
+          onClick={() => handleSidebarSelect("0")}
         >
           <div className="w-8 h-8 flex items-center justify-center">
             <svg

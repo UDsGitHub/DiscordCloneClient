@@ -53,6 +53,7 @@ const FriendsTopbar = ({ currentTab, onTabChange }: Props) => {
           All
         </button>
         <button
+<<<<<<< HEAD
           className={`duration-300 py-0.5 px-2 shadow-sm rounded-md
             ${
               currentTab === 2
@@ -60,6 +61,25 @@ const FriendsTopbar = ({ currentTab, onTabChange }: Props) => {
                 : "bg-green-700 hover:bg-green-800 text-white"
             }`}
           onClick={() => onTabChange(2)}
+=======
+          className={`px-2 duration-300 hover:bg-grey-400/10 rounded-md ${
+            currentTab === 2
+              ? "bg-grey-400/25 font-semibold text-white"
+              : "bg-transparent"
+          }`}
+          onClick={() => onTabChange(2)}
+        >
+          Pending
+        </button>
+        <button
+          className={`duration-300 py-0.5 px-2 shadow-sm rounded-md
+            ${
+              currentTab === 3
+                ? "bg-transparent outline outline-green-700 outline-2 font-semibold text-green-400"
+                : "bg-green-700 hover:bg-green-800 text-white"
+            }`}
+          onClick={() => onTabChange(3)}
+>>>>>>> add-friends-page
         >
           Add Friend
         </button>

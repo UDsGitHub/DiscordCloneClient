@@ -1,5 +1,7 @@
-html, body, #root{
-    height: 100%;
+html,
+body,
+#root {
+  height: 100%;
 }
 
 select::-webkit-scrollbar {
@@ -18,7 +20,7 @@ select::-webkit-scrollbar-thumb {
 .invisible-scroll {
   overflow-y: auto;
   padding-left: 8px;
-  scrollbar-width: none; 
+  scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
@@ -55,4 +57,28 @@ select::-webkit-scrollbar-thumb {
   bottom: 20px;
   left: 50%;
   @apply py-2 px-4 rounded-md;
+}
+
+.tooltip {
+  padding: 8px 12px;
+  transition-duration: 300ms;
+  @apply bg-grey-900;
+  @apply text-white;
+  @apply text-sm;
+  @apply rounded-md;
+  @apply drop-shadow-lg;
+  @apply group-hover:opacity-100;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #111214 transparent transparent transparent;
 }

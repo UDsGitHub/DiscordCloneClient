@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { DmUserListType, User, SendMessageToUserRequest } from "model";
+import { DmUserListType, User, SendMessageToUserRequest, FriendRequest } from "model";
 
 export const usersApi = createApi({
   reducerPath: "user",
@@ -7,31 +7,91 @@ export const usersApi = createApi({
     baseUrl: "http://localhost:3000",
     credentials: "include",
   }),
-  tagTypes: ["getUser", "getDmUsers"],
+  tagTypes: ["user", "dmUsers", "friends", "friendRequests"],
   endpoints: (builder) => ({
     getUser: builder.query<User, void>({
       query: () => ({
         url: "/user/getUser",
         method: "GET",
       }),
-      providesTags: ["getUser"],
+      providesTags: ["user"],
     }),
-    getDmUsers: builder.query<DmUserListType, string>({
-      query: (currentUserId) => ({
-        url: `/user/getDmUsers/${currentUserId}`,
+    getFriends: builder.query<User[], void>({
+      query: () => ({
+        url: `/user/getFriends`,
         method: "GET",
       }),
-      providesTags: ["getDmUsers"],
+      providesTags: ["friends"],
+    }),
+    getDmUsers: builder.query<DmUserListType, void>({
+      query: () => ({
+        url: `/user/getDmUsers`,
+        method: "GET",
+      }),
+      providesTags: ["dmUsers"],
     }),
     sendMessageToUser: builder.mutation<void, SendMessageToUserRequest>({
-      query: ({ userId, toUserId, message }) => ({
+      query: ({ toUserId, message }) => ({
         url: `/user/sendMessageToUser`,
         method: "POST",
-        body: { userId, toUserId, message },
+        body: { toUserId, message },
       }),
-      invalidatesTags: ["getDmUsers"],
+      invalidatesTags: ["dmUsers"],
+    }),
+    sendFriendRequest: builder.mutation<void, string>({
+      query: (toUsername) => ({
+        url: `/user/sendFriendRequest`,
+        method: "POST",
+        body: { toUsername },
+      }),
+      invalidatesTags: ["friendRequests"],
+    }),
+    getFriendRequests: builder.query<FriendRequest[], void>({
+      query: () => ({
+        url: `/user/getFriendRequests`,
+        method: "GET",
+      }),
+      providesTags: ["friendRequests"],
+    }),
+    addFriend: builder.mutation<void, string>({
+      query: (friendId) => ({
+        url: `/user/addFriend`,
+        method: "POST",
+        body: { friendId },
+      }),
+      invalidatesTags: ["friendRequests"],
+    }),
+    unFriend: builder.mutation<void, string>({
+      query: (friendId) => ({
+        url: `/user/unFriend`,
+        method: "DELETE",
+        body: { friendId },
+      }),
+      invalidatesTags: ["friendRequests"],
+    }),
+    ignoreFriendRequest: builder.mutation<void, string>({
+      query: (friendUsername) => ({
+        url: `/user/ignoreFriendRequest`,
+        method: "DELETE",
+        body: { friendUsername },
+      }),
+      invalidatesTags: ["friendRequests"],
     }),
   }),
 });
 
+<<<<<<< HEAD
 export const { useGetUserQuery, useLazyGetDmUsersQuery, useSendMessageToUserMutation } = usersApi;
+=======
+export const {
+  useGetUserQuery,
+  useLazyGetDmUsersQuery,
+  useSendMessageToUserMutation,
+  useSendFriendRequestMutation,
+  useIgnoreFriendRequestMutation,
+  useGetFriendRequestsQuery,
+  useAddFriendMutation,
+  useUnFriendMutation,
+  useGetFriendsQuery,
+} = usersApi;
+>>>>>>> add-friends-page

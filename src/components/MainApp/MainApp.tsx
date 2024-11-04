@@ -13,14 +13,18 @@ type ServersProps = {};
 
 const MainApp = (props: ServersProps) => {
   const { userId } = useParams();
-  const { user, fetchingUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
 
   useEffect(() => {
+<<<<<<< HEAD
     console.log(user);
     
     if (!fetchingUser && !user) {  
+=======
+    if (!user) {
+>>>>>>> add-friends-page
       navigate("/login", { replace: true });
     }
   }, [user]);
@@ -41,7 +45,11 @@ const MainApp = (props: ServersProps) => {
         socket.off("disconnect");
       };
     }
+<<<<<<< HEAD
   }, []);
+=======
+  }, [socket]);
+>>>>>>> add-friends-page
 
   // Use a default value if userId is not provided
   const actualUserId = userId || "@me";

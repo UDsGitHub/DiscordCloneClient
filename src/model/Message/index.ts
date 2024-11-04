@@ -14,7 +14,6 @@ export type DmUser = {
 }
 
 export type SendMessageToUserRequest = {
-  userId: string;
   toUserId: string;
   message: string;
 }

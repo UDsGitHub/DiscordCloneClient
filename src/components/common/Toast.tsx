@@ -14,7 +14,7 @@ const Toast = ({ text, isVisible }: Props) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 100 }}
           transition={{ duration: 0.5 }}
-          className="toast bg-grey-700 text-grey-400"
+          className="toast bg-grey-800 text-grey-400"
         >
           {text}
         </motion.div>
