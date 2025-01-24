@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-
 type ServerAvatarProps = {
   server: any;
-  active: number;
-  setActive: (server: number) => void;
-  index: number;
+  active: string;
+  setActive: (server: string) => void;
+  index: string;
 };
 
 type NotificationBadgeProps = {

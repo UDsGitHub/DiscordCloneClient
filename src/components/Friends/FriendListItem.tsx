@@ -1,6 +1,6 @@
-import { useUnFriendMutation } from "api";
 import { Tooltip, UserAvatar } from "components";
-import { DirectMessagesContext, ToastContext } from "context";
+import { DirectMessagesContext } from "context";
+import { useFriendState } from "hooks";
 import { DmUser, User } from "model";
 import { useContext } from "react";
 
@@ -9,25 +9,16 @@ type Props = {
 };
 
 const FriendListItem = ({ friend }: Props) => {
-  const { showToast } = useContext(ToastContext);
-  const { dmUsers, updateDMUsers, handleSidebarSelect } = useContext(DirectMessagesContext);
-  const [unfriend] = useUnFriendMutation();
+  const { dmUsers, updateDMUsers, handleSidebarSelect } = useContext(
+    DirectMessagesContext
+  );
+  const { unFriendUser } = useFriendState();
   const buttonStyles =
     "h-9 w-9 bg-grey-700 rounded-full duration-300 hover:bg-grey-800 hover:text-white flex justify-center items-center";
 
-  const unFriendUser = () => {
-    unfriend(friend.id)
-      .unwrap()
-      .catch((e) => {
-        if ("status" in e && e.status >= 400) {
-          showToast(e.data.message);
-        }
-      });
-  };
-
   const startDirectMessage = () => {
     if (Object.keys(dmUsers).includes(friend.id)) {
-      return handleSidebarSelect(friend.id)
+      return handleSidebarSelect(friend.id);
     }
     const dmUser: DmUser = {
       userId: friend.id,
@@ -72,7 +63,7 @@ const FriendListItem = ({ friend }: Props) => {
         <Tooltip text="Unfriend" direction="top">
           <button
             className={`${buttonStyles}`}
-            onClick={unFriendUser}
+            onClick={() => unFriendUser(friend.id)}
             aria-label="remove friend"
           >
             <svg

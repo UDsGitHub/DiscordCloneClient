@@ -2,17 +2,6 @@ import { useState } from "react";
 import FriendsList from "./FriendsList";
 import FriendsTopbar from "./FriendsTopbar";
 import AddFriendPage from "./AddFriendPage";
-<<<<<<< HEAD
-
-const FriendsPage = () => {
-  const [currentTab, setCurrentTab] = useState(0);
-  
-  const handleTabChange = (tabId: number) => {
-    setCurrentTab(tabId)
-  }
-
-  const content = currentTab == 2 ? <AddFriendPage /> : <FriendsList />
-=======
 import { useGetFriendRequestsQuery, useGetFriendsQuery } from "api";
 import PendingRequests from "./PendingRequests";
 import FriendSearch from "./FriendSearch";
@@ -22,10 +11,6 @@ const FriendsPage = () => {
   const { data: friends, isLoading: isLoadingFriends } = useGetFriendsQuery();
   const { data: pendingRequests, isLoading: isLoadingRequests } =
     useGetFriendRequestsQuery();
-  // const [friendsList, setFriendsList] = useState<User[]>(friends || []);
-  // const [pendingUserList, setPendingUserList] = useState<FriendRequest[]>(
-  //   pendingRequests || []
-  // );
   const [searchString, setSearchString] = useState<string>("");
   const [currentTab, setCurrentTab] = useState(0);
 
@@ -87,21 +72,16 @@ const FriendsPage = () => {
         );
     }
   };
->>>>>>> add-friends-page
 
   return (
     <>
       <FriendsTopbar currentTab={currentTab} onTabChange={handleTabChange} />
-<<<<<<< HEAD
-      {content}
-=======
       <div className="pt-4 pb-2 pl-[30px] pr-5">
         {currentTab !== 3 && (
           <FriendSearch value={searchString} onChange={handleSearchChange} />
         )}
         {getContent(currentTab)}
       </div>
->>>>>>> add-friends-page
     </>
   );
 };

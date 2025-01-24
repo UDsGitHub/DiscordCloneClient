@@ -4,12 +4,16 @@ import { DirectMessagesContext } from "context";
 
 const DirectMessages = () => {
   const { selectedSidebarTab } = useContext(DirectMessagesContext);
-  
+
   return (
     <>
       <DirectMessagesSidebar />
       <div className="grow flex flex-col relative">
-        {selectedSidebarTab === "0" ? <Friends /> : <GeneralChat />}
+        {selectedSidebarTab === "0" ? (
+          <Friends />
+        ) : (
+          <GeneralChat isDirectMessage />
+        )}
       </div>
     </>
   );

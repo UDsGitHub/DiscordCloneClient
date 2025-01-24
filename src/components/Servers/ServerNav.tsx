@@ -1,16 +1,29 @@
 import { useState } from "react";
-import { ServerAvatar } from "./common";
+import { ServerAvatar } from "../common";
+import AddServerButton from "./AddServerButton";
 
-const ServerNav = () => {
-  const [active, setActive] = useState(0);
+interface ServerNavProps {
+  isAddServerModalOpen: boolean;
+  openAddServerModal: () => void;
+}
+
+const ServerNav = ({
+  isAddServerModalOpen,
+  openAddServerModal,
+}: ServerNavProps) => {
+  const [active, setActive] = useState("0");
   const serverList: any[] = [];
   return (
     <nav className="bg-grey-800 w-[72px] shrink-0 h-full text-grey-300 pt-4 pr-2 overflow-y-scroll invisible-scroll">
       <ServerAvatar
         server={"me"}
-        index={0}
+        index={"0"}
         active={active}
         setActive={setActive}
+      />
+      <AddServerButton
+        isAddServerModalOpen={isAddServerModalOpen}
+        openAddServerModal={openAddServerModal}
       />
       <div className="w-full mb-2">
         <span className="bg-grey-500 block mx-auto w-8 h-[2px]"></span>
@@ -19,7 +32,7 @@ const ServerNav = () => {
         <ServerAvatar
           key={index}
           server={server}
-          index={index + 1}
+          index={`${index + 1}`}
           active={active}
           setActive={setActive}
         />

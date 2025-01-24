@@ -1,6 +1,7 @@
-import { useAddFriendMutation, useIgnoreFriendRequestMutation } from "api";
+import { useAddFriendMutation } from "api";
 import { Tooltip, UserAvatar } from "components";
 import { ToastContext } from "context";
+import { useFriendState } from "hooks";
 import { FriendRequest, FriendRequestDirection } from "model";
 import { useContext, useState } from "react";
 
@@ -12,20 +13,10 @@ const PendingRequestItem = ({ friend }: Props) => {
   const { showToast } = useContext(ToastContext);
   const [showUsername, setShowUsername] = useState(false);
   const [addFriend] = useAddFriendMutation();
-  const [ignoreFriend] = useIgnoreFriendRequestMutation();
+  const { ignoreFriendRequest } = useFriendState();
 
   const acceptFriendRequest = () => {
     addFriend(friend.user.id)
-      .unwrap()
-      .catch((e) => {
-        if ("status" in e && e.status >= 400) {
-          showToast(e.data.message);
-        }
-      });
-  };
-
-  const ignoreFriendRequest = () => {
-    ignoreFriend(friend.user.username)
       .unwrap()
       .catch((e) => {
         if ("status" in e && e.status >= 400) {
@@ -84,7 +75,7 @@ const PendingRequestItem = ({ friend }: Props) => {
         <Tooltip text="Ignore" direction="top">
           <button
             className="h-9 w-9 flex justify-center items-center bg-grey-700 rounded-full group-hover:text-red-700"
-            onClick={ignoreFriendRequest}
+            onClick={() => ignoreFriendRequest(friend.user.id)}
           >
             <svg
               className="w-5 h-5"

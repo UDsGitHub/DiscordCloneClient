@@ -59,7 +59,7 @@ export const usersApi = createApi({
         method: "POST",
         body: { friendId },
       }),
-      invalidatesTags: ["friendRequests"],
+      invalidatesTags: ["friendRequests", 'friends'],
     }),
     unFriend: builder.mutation<void, string>({
       query: (friendId) => ({
@@ -80,9 +80,6 @@ export const usersApi = createApi({
   }),
 });
 
-<<<<<<< HEAD
-export const { useGetUserQuery, useLazyGetDmUsersQuery, useSendMessageToUserMutation } = usersApi;
-=======
 export const {
   useGetUserQuery,
   useLazyGetDmUsersQuery,
@@ -93,5 +90,5 @@ export const {
   useAddFriendMutation,
   useUnFriendMutation,
   useGetFriendsQuery,
+  useLazyGetFriendsQuery,
 } = usersApi;
->>>>>>> add-friends-page
