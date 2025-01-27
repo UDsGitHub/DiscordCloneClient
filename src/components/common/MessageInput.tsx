@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { DmUser } from "model";
 import { DirectMessagesContext } from "context";
 
@@ -9,9 +9,15 @@ type Props = {
 
 const MessageInput = ({ currentUser, handleSendMessage }: Props) => {
   const { setCurrentMessage } = useContext(DirectMessagesContext);
-  const [messageValue, setMessageValue] = useState<string>(currentUser.currentMessage || "");
+  const [messageValue, setMessageValue] = useState<string>(
+    currentUser.currentMessage
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const [showOutline, setShowOutline] = useState(false);
+
+  useEffect(() => {
+    setMessageValue(currentUser.currentMessage);
+  }, [currentUser]);
 
   function handleFormFocus() {
     inputRef.current && inputRef.current.focus();
@@ -22,7 +28,7 @@ const MessageInput = ({ currentUser, handleSendMessage }: Props) => {
     e.preventDefault();
     handleSendMessage(messageValue);
     setCurrentMessage(currentUser.userId, "");
-    setMessageValue('');
+    setMessageValue("");
   }
 
   return (
@@ -39,7 +45,7 @@ const MessageInput = ({ currentUser, handleSendMessage }: Props) => {
       <input
         ref={inputRef}
         type="text"
-        placeholder={`Message @${currentUser.username}`}
+        placeholder={`Message @${currentUser.displayName}`}
         className="bg-transparent w-full outline-none text-grey-400"
         value={messageValue}
         onChange={(e) => setMessageValue(e.target.value)}

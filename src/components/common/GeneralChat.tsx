@@ -63,7 +63,7 @@ const GeneralChat = ({ isDirectMessage = false }: Props) => {
       const isDmUserFriend = friends.find(
         (friend) => friend.id == currentDmUser.userId
       );
-      
+
       if (!isDmUserFriend) {
         return (
           <div className="flex gap-2">
@@ -119,11 +119,11 @@ const GeneralChat = ({ isDirectMessage = false }: Props) => {
         <div className="mb-4">
           <UserAvatar showStatus={false} size="large" />
           <p className="text-2xl font-bold text-white">
-            {currentDmUser.username}
+            {currentDmUser.displayName}
           </p>
           <p>
             This is the beginning of your direct message history with{" "}
-            <span className="text-grey-300">{currentDmUser.username}</span>
+            <span className="text-grey-300">{currentDmUser.displayName}</span>
           </p>
           <div className="text-sm flex gap-4 items-center mt-4">
             <p>No servers in common</p>

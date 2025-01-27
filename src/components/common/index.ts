@@ -13,3 +13,4 @@ export { default as PageLoader } from "./PageLoader";
 export { default as FriendLoader } from "./FriendLoader";
 export { default as Tooltip } from "./Tooltip";
 export { default as UploadProfilePicture } from "./UploadProfilePicture";
+export { default as DirectMessagesAvatar } from "./DirectMessagesAvatar";

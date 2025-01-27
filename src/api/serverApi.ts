@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ServerType, User } from "model";
+import { ChannelType, ServerList, ServerType } from "model";
 
 export interface CreateServerRequest {
   serverName: string;
@@ -10,30 +10,53 @@ export interface CreateServerResponse {
   message: string;
 }
 
+export interface GetChannelInfoRequest {
+  serverId: string;
+  channelId: string;
+}
+
 export const serverApi = createApi({
-  reducerPath: "servers",
+  reducerPath: "server",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3000",
     credentials: "include",
   }),
   tagTypes: ["servers"],
   endpoints: (builder) => ({
-    getServers: builder.query<ServerType[], void>({
+    getServers: builder.query<ServerList[], void>({
       query: () => ({
-        url: "/servers/getServers",
+        url: "server/",
         method: "GET",
       }),
       providesTags: ["servers"],
     }),
-
-    createServer: builder.mutation<void, CreateServerRequest>({
-      query: ({ serverName, serverDisplayPicture }) => ({
-        url: `/servers/createServer`,
+    getServer: builder.query<ServerType, string>({
+      query: (id) => ({
+        url: `server/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["servers"],
+    }),
+    getChannelInfo: builder.query<ChannelType, GetChannelInfoRequest>({
+      query: ({ serverId, channelId }) => ({
+        url: `server/${serverId}/channels/${channelId}`,
+        method: "GET",
+      }),
+      providesTags: ["servers"],
+    }),
+    createServer: builder.mutation<void, FormData>({
+      query: (formData) => ({
+        url: `server/createServer`,
         method: "POST",
-        body: { serverName, serverDisplayPicture },
+        body: formData,
       }),
     }),
   }),
 });
 
-export const {useGetServersQuery, useCreateServerMutation} = serverApi;
+export const {
+  useLazyGetServersQuery,
+  useLazyGetServerQuery,
+  useLazyGetChannelInfoQuery,
+  useCreateServerMutation,
+} = serverApi;

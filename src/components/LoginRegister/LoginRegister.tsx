@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Login, Register } from "components";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "context";
+import { UserContext, useRouteTracker } from "context";
 
 type LoginRegisterProps = {};
 
 const LoginRegister = (props: LoginRegisterProps) => {
-  let navigate = useNavigate();
+  const { previousRoute, currentRoute } = useRouteTracker();
+  const navigate = useNavigate();
   const location = useLocation();
   const currentURL = location.pathname;
   const [loginVisible, setLoginVisible] = useState(
@@ -16,8 +17,24 @@ const LoginRegister = (props: LoginRegisterProps) => {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
+    if (
+      user &&
+      !previousRoute &&
+      currentRoute &&
+      currentRoute !== "/login" &&
+      currentRoute !== "/register"
+    ) {
+      return navigate(currentRoute, { replace: true });
+    } else if (
+      user &&
+      previousRoute &&
+      previousRoute !== "/login" &&
+      previousRoute !== "/register"
+    ) {
+      return navigate(previousRoute, { replace: true });
+    }
     if (user) {
-      navigate("/channels/@me", { replace: true });
+      return navigate("/channels/@me", { replace: true });
     }
   }, [user]);
 

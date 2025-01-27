@@ -3,6 +3,7 @@ import { DirectMessagesContext } from "context";
 import { useFriendState } from "hooks";
 import { DmUser, User } from "model";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   friend: User;
@@ -13,17 +14,19 @@ const FriendListItem = ({ friend }: Props) => {
     DirectMessagesContext
   );
   const { unFriendUser } = useFriendState();
+  const navigate = useNavigate();
   const buttonStyles =
     "h-9 w-9 bg-grey-700 rounded-full duration-300 hover:bg-grey-800 hover:text-white flex justify-center items-center";
 
   const startDirectMessage = () => {
     if (Object.keys(dmUsers).includes(friend.id)) {
-      return handleSidebarSelect(friend.id);
+      handleSidebarSelect(friend.id);
+      navigate(`/channels/@me/${friend.id}`);
     }
     const dmUser: DmUser = {
       userId: friend.id,
-      username: friend.username,
-      currentMessage: undefined,
+      displayName: friend.username,
+      currentMessage: "",
       messageList: [],
     };
     updateDMUsers(dmUser);

@@ -1,33 +1,26 @@
-import { useContext, useMemo } from "react";
-import { UserAvatar, Sidebar } from "../common";
+import { useContext, useEffect, useMemo } from "react";
+import { Sidebar } from "../common";
 import { DirectMessagesContext } from "context";
-import { DmUser } from "model";
-
-type DMUserProps = {
-  user: DmUser;
-};
+import DirectMessageUser from "./DirectMessageUser";
+import { useNavigate } from "react-router-dom";
 
 const DirectMessagesSidebar = () => {
   const { selectedSidebarTab, handleSidebarSelect, dmUsers } = useContext(
     DirectMessagesContext
   );
-  const dmUserList = useMemo(() => dmUsers || {}, [dmUsers])
+  const dmUserList = useMemo(() => dmUsers || {}, [dmUsers]);
+  const navigate = useNavigate();
 
-  const DMUser = ({ user }: DMUserProps) => {
-    return (
-      <li
-        className={`hover:bg-grey-500 ${
-          selectedSidebarTab === user.userId && "bg-grey-400/10"
-        } rounded-md text-grey-400 cursor-pointer`}
-        onClick={() => handleSidebarSelect(user.userId)}
-      >
-        <button className="px-2 h-[42px] w-full flex items-center ">
-          <UserAvatar />
-          <p className="grow ml-3 text-left">{user.username}</p>
-        </button>
-      </li>
-    );
+  const handleFriendsClick = () => {
+    handleSidebarSelect("0");
+    navigate("/channels/@me");
   };
+
+  useEffect(() => {
+    if (selectedSidebarTab === "0") {
+      navigate("/channels/@me");
+    }
+  }, [selectedSidebarTab]);
 
   return (
     <Sidebar
@@ -42,7 +35,7 @@ const DirectMessagesSidebar = () => {
           className={`text-grey-400 w-full h-[42px] px-2 flex items-center rounded-md hover:bg-grey-500 ${
             selectedSidebarTab === "0" && "bg-grey-400/10 text-white"
           }`}
-          onClick={() => handleSidebarSelect("0")}
+          onClick={handleFriendsClick}
         >
           <div className="w-8 h-8 flex items-center justify-center">
             <svg
@@ -71,7 +64,12 @@ const DirectMessagesSidebar = () => {
         </div>
         <ul>
           {Object.keys(dmUserList).map((user: string) => (
-            <DMUser key={user} user={dmUserList[user]} />
+            <DirectMessageUser
+              key={user}
+              user={dmUserList[user]}
+              selectedSidebarTab={selectedSidebarTab}
+              onClick={handleSidebarSelect}
+            />
           ))}
         </ul>
       </div>

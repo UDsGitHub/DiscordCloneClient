@@ -10,6 +10,8 @@ type RegisterProps = {
 };
 
 const Register = ({ toggleForm }: RegisterProps) => {
+  // TODO: configure code to use zod for validation and formData for submitting
+
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");

@@ -34,8 +34,6 @@ const AddServerCustomizeForm = ({ onClose, changeFormState }: Props) => {
     const files = e.target.files;
     const inputFile = files && files[0];
     if (inputFile && inputFile.size < MAX_IMAGE_FILE_SIZE) {
-      console.log(inputFile);
-
       // Prepare preview image from blob
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -56,11 +54,11 @@ const AddServerCustomizeForm = ({ onClose, changeFormState }: Props) => {
   const handleFormSubmit = () => {
     // Submit the form
     if (serverName !== "") {
-      const submitRequest = {
-        serverName,
-        serverDisplayPicture,
-      };
-      createServer(submitRequest)
+      const formData = new FormData();
+      formData.append("serverName", serverName);
+      if (serverDisplayPicture)
+        formData.append("serverDisplayPicture", serverDisplayPicture);
+      createServer(formData)
         .unwrap()
         .then(() => {
           resetForm();

@@ -11,7 +11,7 @@ const ChatTopbar = ({ dmUser }: Props) => {
       <div className="mx-2">
         <UserAvatar size="small" />
       </div>
-      {dmUser.username}
+      {dmUser.displayName}
     </TopbarLayout>
   );
 };

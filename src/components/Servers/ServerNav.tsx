@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { ServerAvatar } from "../common";
+import { useContext, useState } from "react";
+import { DirectMessagesAvatar, ServerAvatar } from "../common";
 import AddServerButton from "./AddServerButton";
+import { ServerContext } from "context";
 
 interface ServerNavProps {
   isAddServerModalOpen: boolean;
@@ -12,15 +13,20 @@ const ServerNav = ({
   openAddServerModal,
 }: ServerNavProps) => {
   const [active, setActive] = useState("0");
-  const serverList: any[] = [];
+  const { servers, handleServerSelect } = useContext(ServerContext);
+
+  const handleClick = (id: string) => {
+    if (id === "0") {
+      return setActive(id);
+    } else {
+      handleServerSelect(id);
+      setActive(id);
+    }
+  };
+
   return (
     <nav className="bg-grey-800 w-[72px] shrink-0 h-full text-grey-300 pt-4 pr-2 overflow-y-scroll invisible-scroll">
-      <ServerAvatar
-        server={"me"}
-        index={"0"}
-        active={active}
-        setActive={setActive}
-      />
+      <DirectMessagesAvatar active={active} onClick={handleClick} />
       <AddServerButton
         isAddServerModalOpen={isAddServerModalOpen}
         openAddServerModal={openAddServerModal}
@@ -28,13 +34,13 @@ const ServerNav = ({
       <div className="w-full mb-2">
         <span className="bg-grey-500 block mx-auto w-8 h-[2px]"></span>
       </div>
-      {serverList.map((server, index) => (
+      {servers.map((server, index) => (
         <ServerAvatar
           key={index}
           server={server}
-          index={`${index + 1}`}
+          index={server.id}
           active={active}
-          setActive={setActive}
+          onClick={handleClick}
         />
       ))}
     </nav>

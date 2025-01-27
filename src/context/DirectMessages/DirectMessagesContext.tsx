@@ -38,8 +38,8 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
     for (const key in data) {
       result[key] = {
         userId: data[key].userId,
-        username: data[key].username,
-        currentMessage: "",
+        displayName: data[key].displayName,
+        currentMessage: data[key].currentMessage,
         messageList: data[key].messageList,
       };
     }
@@ -54,7 +54,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
 
   function handleSidebarSelect(id: string) {
     setSelectedSidebarTab(id);
-    
+
     if (socket) {
       if (id !== "0") {
         socket.emit("join_room", { room: id });
@@ -85,8 +85,8 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
 
   function updateDMUsers(dmUser: DmUser) {
     if (!Object.keys(dmUsers).includes(dmUser.userId)) {
-      setDmUsers(prevState => ({...prevState, [dmUser.userId]: dmUser}));
-      handleSidebarSelect(dmUser.userId)
+      setDmUsers((prevState) => ({ ...prevState, [dmUser.userId]: dmUser }));
+      handleSidebarSelect(dmUser.userId);
     }
   }
 

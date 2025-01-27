@@ -16,7 +16,6 @@ const Login = ({ toggleForm }: LoginProps) => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const { showToast } = useContext(ToastContext);
-  
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
