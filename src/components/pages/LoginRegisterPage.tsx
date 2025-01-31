@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Login, Register } from "components";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserContext, useRouteTracker } from "context";
+import { useRouteTracker, useUserContext } from "context";
 
-type LoginRegisterProps = {};
-
-const LoginRegister = (props: LoginRegisterProps) => {
+const LoginRegisterPage = () => {
   const { previousRoute, currentRoute } = useRouteTracker();
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,7 +12,7 @@ const LoginRegister = (props: LoginRegisterProps) => {
   const [loginVisible, setLoginVisible] = useState(
     currentURL === "/login" ? true : false
   );
-  const { user } = useContext(UserContext);
+  const { user } = useUserContext();;
 
   useEffect(() => {
     if (
@@ -60,4 +58,4 @@ const LoginRegister = (props: LoginRegisterProps) => {
   );
 };
 
-export default LoginRegister;
+export default LoginRegisterPage;

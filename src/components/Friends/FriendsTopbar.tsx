@@ -1,4 +1,4 @@
-import { TopbarLayout } from "components";
+import { TopbarLayout, VerticalLine } from "components";
 
 interface Props {
   currentTab: number;
@@ -8,8 +8,8 @@ interface Props {
 const FriendsTopbar = ({ currentTab, onTabChange }: Props) => {
   return (
     <TopbarLayout>
-      <div className="flex items-center gap-2 text-grey-400">
-        <div className="px-2 flex items-center rounded-md cursor-default">
+      <div className="flex items-center gap-4 text-grey-400">
+        <div className="pl-2 flex items-center rounded-md cursor-default">
           <div className="w-6 h-6 flex items-center justify-center">
             <svg
               aria-hidden="true"
@@ -31,7 +31,7 @@ const FriendsTopbar = ({ currentTab, onTabChange }: Props) => {
           </div>
           <span className="ml-2 text-left">Friends</span>
         </div>
-        <div className="bg-grey-400 opacity-10 h-6 w-[1px]"></div>
+        <VerticalLine />
         <button
           className={`px-2 duration-300 hover:bg-grey-400/10 rounded-md ${
             currentTab === 0

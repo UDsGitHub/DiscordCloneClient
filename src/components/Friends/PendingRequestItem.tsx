@@ -1,16 +1,16 @@
 import { useAddFriendMutation } from "api";
 import { Tooltip, UserAvatar } from "components";
-import { ToastContext } from "context";
+import { useToastContext } from "context";
 import { useFriendState } from "hooks";
 import { FriendRequest, FriendRequestDirection } from "model";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   friend: FriendRequest;
 };
 
 const PendingRequestItem = ({ friend }: Props) => {
-  const { showToast } = useContext(ToastContext);
+  const { showToast } = useToastContext();
   const [showUsername, setShowUsername] = useState(false);
   const [addFriend] = useAddFriendMutation();
   const { ignoreFriendRequest } = useFriendState();

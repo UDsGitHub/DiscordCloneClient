@@ -1,10 +1,10 @@
 import { useState } from "react";
-import FriendsList from "./FriendsList";
-import FriendsTopbar from "./FriendsTopbar";
-import AddFriendPage from "./AddFriendPage";
+import FriendsList from "../Friends/FriendsList";
+import FriendsTopbar from "../Friends/FriendsTopbar";
+import AddFriendPage from "../Friends/AddFriendPage";
 import { useGetFriendRequestsQuery, useGetFriendsQuery } from "api";
-import PendingRequests from "./PendingRequests";
-import FriendSearch from "./FriendSearch";
+import PendingRequests from "../Friends/PendingRequests";
+import FriendSearch from "../Friends/FriendSearch";
 import { FriendRequest, User } from "model";
 
 const FriendsPage = () => {

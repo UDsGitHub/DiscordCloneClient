@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ChannelType, ServerList, ServerType } from "model";
+import { ChannelMessageType, ChannelType, ServerType } from "model";
 
 export interface CreateServerRequest {
   serverName: string;
@@ -23,7 +23,7 @@ export const serverApi = createApi({
   }),
   tagTypes: ["servers"],
   endpoints: (builder) => ({
-    getServers: builder.query<ServerList[], void>({
+    getServers: builder.query<ServerType[], void>({
       query: () => ({
         url: "server/",
         method: "GET",
@@ -50,6 +50,14 @@ export const serverApi = createApi({
         method: "POST",
         body: formData,
       }),
+      invalidatesTags: ['servers']
+    }),
+    sendMessageToChannel: builder.mutation<void, ChannelMessageType>({
+      query: (message) => ({
+        url: `server/sendChannelMessage`,
+        method: "POST",
+        body: message,
+      }),
     }),
   }),
 });
@@ -59,4 +67,5 @@ export const {
   useLazyGetServerQuery,
   useLazyGetChannelInfoQuery,
   useCreateServerMutation,
+  useSendMessageToChannelMutation,
 } = serverApi;

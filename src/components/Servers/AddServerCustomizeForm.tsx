@@ -1,7 +1,7 @@
 import { formStateType } from "./AddServerModal";
 import AddServerBaseForm from "./AddServerBaseForm";
-import { useContext, useState } from "react";
-import { ToastContext, UserContext } from "context";
+import { useState } from "react";
+import { useToastContext, useUserContext } from "context";
 import { MAX_IMAGE_FILE_SIZE } from "model";
 import { UploadProfilePicture } from "components";
 import { useCreateServerMutation } from "api";
@@ -13,8 +13,8 @@ type Props = {
 };
 
 const AddServerCustomizeForm = ({ onClose, changeFormState }: Props) => {
-  const { user } = useContext(UserContext);
-  const { showToast } = useContext(ToastContext);
+  const { user } = useUserContext();;
+  const { showToast } = useToastContext();
   const [serverName, setServerName] = useState(
     user ? `${user.username}'s server` : ""
   );

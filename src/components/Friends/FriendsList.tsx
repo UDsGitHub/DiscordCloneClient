@@ -1,6 +1,6 @@
 import FriendListItem from "./FriendListItem";
 import { User } from "model";
-import { FriendLoader } from "components";
+import FriendLoader from "./FriendLoader";
 
 interface FriendsListProps {
   friends: User[];

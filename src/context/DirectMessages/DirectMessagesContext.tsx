@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DmUser, DmUserListType, Message } from "model";
 import { useLazyGetDmUsersQuery, useSendMessageToUserMutation } from "api";
-import { SocketContext, UserContext } from "context";
+import { useSocketContext, useUserContext } from "context";
 
 type DirectMessagesContextType = {
   selectedSidebarTab: string;
@@ -26,8 +26,8 @@ export const DirectMessagesContext = createContext<DirectMessagesContextType>({
 });
 
 const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
-  const { user } = useContext(UserContext);
-  const { socket } = useContext(SocketContext);
+  const { user } = useUserContext();
+  const { socket } = useSocketContext();
   const [getDmUsers, { data: dmUserList }] = useLazyGetDmUsersQuery();
   const [selectedSidebarTab, setSelectedSidebarTab] = useState("0");
   const [dmUsers, setDmUsers] = useState<DmUserListType>(dmUserList || {});
@@ -105,5 +105,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
     </DirectMessagesContext.Provider>
   );
 };
+
+export const useDirectMessageContext = () => useContext(DirectMessagesContext)
 
 export default DirectMessagesProvider;

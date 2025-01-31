@@ -1,8 +1,8 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
 import { DateSelect, Input } from "components";
 import { useRegisterMutation } from "api";
-import { ToastContext, UserContext } from "context";
+import { useToastContext, useUserContext } from "context";
 import { useNavigate } from "react-router-dom";
 
 type RegisterProps = {
@@ -18,9 +18,9 @@ const Register = ({ toggleForm }: RegisterProps) => {
   const [password, setPassword] = useState("");
   const [date, setDate] = useState("");
   const [register] = useRegisterMutation();
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUserContext();
   const navigate = useNavigate();
-  const { showToast } = useContext(ToastContext);
+  const { showToast } = useToastContext();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

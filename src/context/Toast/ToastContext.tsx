@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 import { Toast } from "components";
 import { AnimatePresence } from "framer-motion";
 
@@ -15,23 +15,28 @@ export const ToastContext = createContext<ToastContextType>({
 });
 
 const ToastProvider = ({ children }: Props) => {
-const [text, setText] = useState<string>('');
-const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [text, setText] = useState<string>("");
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const toastRef = useRef<HTMLDivElement>(null);
 
   function showToast(text: string) {
-    setText(text)
+    setText(text);
     setIsVisible(true);
-    setTimeout(() => setIsVisible(false), 2500)
+    setTimeout(() => setIsVisible(false), 2500);
   }
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <AnimatePresence mode="popLayout">
-        <Toast text={text} isVisible={isVisible} />
+      <AnimatePresence>
+        {isVisible && (
+          <Toast ref={toastRef} text={text} isVisible={isVisible} />
+        )}
       </AnimatePresence>
     </ToastContext.Provider>
   );
 };
+
+export const useToastContext = () => useContext(ToastContext);
 
 export default ToastProvider;

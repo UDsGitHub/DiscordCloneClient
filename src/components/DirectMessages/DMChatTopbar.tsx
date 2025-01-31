@@ -5,7 +5,7 @@ type Props = {
   dmUser: DmUser;
 };
 
-const ChatTopbar = ({ dmUser }: Props) => {
+const DMChatTopbar = ({ dmUser }: Props) => {
   return (
     <TopbarLayout>
       <div className="mx-2">
@@ -16,4 +16,4 @@ const ChatTopbar = ({ dmUser }: Props) => {
   );
 };
 
-export default ChatTopbar;
+export default DMChatTopbar;

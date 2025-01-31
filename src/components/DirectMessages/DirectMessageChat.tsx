@@ -1,30 +1,26 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { ChatTopbar, UserAvatar, MessageChip } from "components";
-import { DirectMessagesContext, UserContext } from "context";
-import MessageInput from "./MessageInput";
+import { UserAvatar, MessageChip } from "components";
+import { DirectMessagesContext, useUserContext } from "context";
 import { Message } from "model";
-import { useLazyGetFriendsQuery } from "api";
 import { useFriendState } from "hooks";
+import { useGetFriendsQuery } from "api";
+import DMChatTopbar from "./DMChatTopbar";
+import DirectMessagesChatInput from "./DirectMessagesChatInput";
 
-type Props = {
-  isDirectMessage?: boolean;
-};
-
-const GeneralChat = ({ isDirectMessage = false }: Props) => {
+const DirectMessageChat = () => {
+  const { user } = useUserContext();
   const { dmUsers, selectedSidebarTab, sendMessage } = useContext(
     DirectMessagesContext
   );
-  const [getFriends, { data: friends, isLoading: isLoadingFriends }] =
-    useLazyGetFriendsQuery();
+  const { data: friends, isLoading: isLoadingFriends } = useGetFriendsQuery();
   const currentDmUser = dmUsers
     ? dmUsers[selectedSidebarTab]
     : dmUsers[Object.keys(dmUsers)[0]];
-  const scrollableRef = useRef<HTMLDivElement>(null);
-  const { user } = useContext(UserContext);
   const [messageList, setMessageList] = useState<Message[]>(
     currentDmUser?.messageList || []
   );
   const { sendFriendRequest, removeFriend } = useFriendState();
+  const scrollableRef = useRef<HTMLDivElement>(null);
 
   function handleSendMessage(messageString: string) {
     const today = new Date();
@@ -51,12 +47,6 @@ const GeneralChat = ({ isDirectMessage = false }: Props) => {
       scrollableRef.current.scrollTop = scrollableRef.current.scrollHeight;
     }
   }, [messageList]);
-
-  useEffect(() => {
-    if (isDirectMessage) {
-      getFriends();
-    }
-  }, [isDirectMessage]);
 
   const friendActionButtons = useMemo(() => {
     if (!isLoadingFriends && friends) {
@@ -111,7 +101,7 @@ const GeneralChat = ({ isDirectMessage = false }: Props) => {
 
   return (
     <>
-      <ChatTopbar dmUser={currentDmUser} />
+      <DMChatTopbar dmUser={currentDmUser} />
       <div
         className="main-chat-area overflow-y-auto text-grey-400 p-4"
         ref={scrollableRef}
@@ -137,7 +127,7 @@ const GeneralChat = ({ isDirectMessage = false }: Props) => {
         ))}
       </div>
       <div className="p-4 absolute bottom-0 w-full">
-        <MessageInput
+        <DirectMessagesChatInput
           currentUser={currentDmUser}
           handleSendMessage={handleSendMessage}
         />
@@ -146,4 +136,4 @@ const GeneralChat = ({ isDirectMessage = false }: Props) => {
   );
 };
 
-export default GeneralChat;
+export default DirectMessageChat;

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { User } from "model";
 import { useGetUserQuery } from "api";
 import { PageLoader } from "components";
@@ -54,5 +54,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
     </UserContext.Provider>
   );
 };
+
+export const useUserContext = () => useContext(UserContext)
 
 export default UserProvider;

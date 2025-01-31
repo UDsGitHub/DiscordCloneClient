@@ -90,5 +90,4 @@ export const {
   useAddFriendMutation,
   useUnFriendMutation,
   useGetFriendsQuery,
-  useLazyGetFriendsQuery,
 } = usersApi;

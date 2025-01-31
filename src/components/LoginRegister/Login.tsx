@@ -1,9 +1,9 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "components";
 import { useLoginMutation } from "api";
 import { useNavigate } from "react-router-dom";
-import { ToastContext, UserContext } from "context";
+import { useToastContext, useUserContext } from "context";
 
 type LoginProps = {
   toggleForm: () => void;
@@ -14,8 +14,8 @@ const Login = ({ toggleForm }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
-  const { showToast } = useContext(ToastContext);
+  const { setUser } = useUserContext();
+  const { showToast } = useToastContext();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

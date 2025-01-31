@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 
 type SocketContextType = {
@@ -50,3 +50,5 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     </SocketContext.Provider>
   );
 };
+
+export const useSocketContext = () => useContext(SocketContext)

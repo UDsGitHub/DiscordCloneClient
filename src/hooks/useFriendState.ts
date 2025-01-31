@@ -4,12 +4,11 @@ import {
   useSendFriendRequestMutation,
   useUnFriendMutation,
 } from "api";
-import { ToastContext } from "context";
+import { useToastContext } from "context";
 import { User } from "model";
-import { useContext } from "react";
 
 export default function useFriendState() {
-  const { showToast } = useContext(ToastContext);
+  const { showToast } = useToastContext();
   const { data: friends, isLoading: isLoadingFriends } = useGetFriendsQuery();
   const [unfriend] = useUnFriendMutation();
   const [ignoreFriend] = useIgnoreFriendRequestMutation();

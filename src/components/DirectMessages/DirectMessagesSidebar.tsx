@@ -25,9 +25,11 @@ const DirectMessagesSidebar = () => {
   return (
     <Sidebar
       topBar={
-        <div className="bg-grey-800 text-grey-400 text-sm h-7 px-1.5 flex items-center rounded-md">
-          Find or start a conversation
-        </div>
+        <button className="p-2.5 w-full shadow-md">
+          <div className="bg-grey-800 text-grey-400 text-sm h-7 px-1.5 flex items-center rounded-md">
+            Find or start a conversation
+          </div>
+        </button>
       }
     >
       <div className="p-2">
@@ -60,7 +62,22 @@ const DirectMessagesSidebar = () => {
         </button>
         <div className="flex justify-between items-center font-semibold text-grey-400 px-2 mt-4">
           <p className="text-xs">DIRECT MESSAGES</p>
-          <button className="text-xl">+</button>
+          <button>
+            <svg
+              aria-hidden="true"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M13 6a1 1 0 1 0-2 0v5H6a1 1 0 1 0 0 2h5v5a1 1 0 1 0 2 0v-5h5a1 1 0 1 0 0-2h-5V6Z"
+              ></path>
+            </svg>
+          </button>
         </div>
         <ul>
           {Object.keys(dmUserList).map((user: string) => (

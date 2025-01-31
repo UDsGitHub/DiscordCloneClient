@@ -1,7 +1,10 @@
-import { useContext, useState } from "react";
-import { DirectMessagesAvatar, ServerAvatar } from "../common";
+import { useState } from "react";
 import AddServerButton from "./AddServerButton";
-import { ServerContext } from "context";
+import { useServerContext } from "context";
+import { useNavigate } from "react-router-dom";
+import { ServerType } from "model";
+import ServerAvatar from "./ServerAvatar";
+import { DirectMessagesAvatar } from "components";
 
 interface ServerNavProps {
   isAddServerModalOpen: boolean;
@@ -13,15 +16,20 @@ const ServerNav = ({
   openAddServerModal,
 }: ServerNavProps) => {
   const [active, setActive] = useState("0");
-  const { servers, handleServerSelect } = useContext(ServerContext);
+  const { servers, selectedServer, handleServerSelect } = useServerContext();
+  const navigate = useNavigate();
 
   const handleClick = (id: string) => {
     if (id === "0") {
-      return setActive(id);
-    } else {
-      handleServerSelect(id);
       setActive(id);
+      handleServerSelect("0", selectedServer?.lastSelectedChannel ?? "");
     }
+  };
+
+  const handleServerClick = (server: ServerType) => {
+    handleServerSelect(server.id, server.lastSelectedChannel);
+    setActive(server.id);
+    navigate(`/channels/${server.id}/${server.lastSelectedChannel}`);
   };
 
   return (
@@ -38,9 +46,8 @@ const ServerNav = ({
         <ServerAvatar
           key={index}
           server={server}
-          index={server.id}
           active={active}
-          onClick={handleClick}
+          onClick={handleServerClick}
         />
       ))}
     </nav>

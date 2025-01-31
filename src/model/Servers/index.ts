@@ -1,13 +1,19 @@
-export interface ServerList {
+export interface ServerType {
   id: string;
   name: string;
   displayPicture?: string;
-  lastSelectedChannel?: string;
-}
-
-export interface ServerType extends ServerList {
+  lastSelectedChannel: string;
   channels: ChannelType[];
   categories: CategoryType[];
+  members: ServerMemberType[];
+}
+
+export interface ServerMemberType {
+  userId: string;
+  displayName: string;
+  nickname: string;
+  // profilePicture: string, // to be implemented
+  // status: string; // eventually should become 'online' | 'offline' | 'dnd'
 }
 
 export interface ChannelType {
@@ -17,7 +23,7 @@ export interface ChannelType {
   topic: string;
   type: number;
   messages: ChannelMessageType[];
-  currentMessage?: string;
+  currentMessage: string;
 }
 
 export interface CategoryType {
@@ -28,7 +34,7 @@ export interface CategoryType {
 }
 
 export interface ChannelMessageType {
-  id: string;
+  id?: string;
   channelId: string;
   author: { userId: string; displayName: string };
   content: string;

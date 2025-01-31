@@ -1,6 +1,6 @@
-import { FriendLoader } from "components/common";
 import { FriendRequest } from "model";
 import PendingRequestItem from "./PendingRequestItem";
+import FriendLoader from "./FriendLoader";
 
 type Props = {
   isLoading: boolean;
