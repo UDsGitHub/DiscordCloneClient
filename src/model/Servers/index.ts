@@ -39,5 +39,5 @@ export interface ChannelMessageType {
   author: { userId: string; displayName: string };
   content: string;
   timeStamp: Date;
-  refMessageId: string;
+  refMessageId?: string;
 }

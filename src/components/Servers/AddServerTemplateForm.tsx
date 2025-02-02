@@ -1,5 +1,5 @@
 import AddServerBaseForm from "./AddServerBaseForm";
-import { formStateType } from "./AddServerModal";
+import { formStateType } from "./CreateServerModal";
 
 interface AddServerTemplateFormProps {
   onClose: () => void;

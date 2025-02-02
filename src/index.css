@@ -66,29 +66,12 @@ select::-webkit-scrollbar-thumb {
   position: fixed;
   bottom: 20px;
   left: 50%;
-  @apply py-2 px-4 rounded-md;
+  @apply py-2 px-4 rounded-md bg-grey-800 text-grey-400;
 }
 
 .tooltip {
   padding: 8px 12px;
-  transition-duration: 300ms;
-  @apply bg-grey-900;
-  @apply text-white;
-  @apply text-sm;
-  @apply rounded-md;
-  @apply drop-shadow-lg;
-  @apply group-hover:opacity-100;
+  @apply bg-grey-900 text-white text-sm rounded-md drop-shadow-lg group-hover:opacity-100 fixed duration-300 flex items-center;
   pointer-events: none;
   z-index: 100;
-}
-
-.tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #111214 transparent transparent transparent;
 }

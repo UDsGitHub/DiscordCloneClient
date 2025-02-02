@@ -1,9 +1,7 @@
 import { useFriendState } from "hooks";
 import React, { useState, useRef } from "react";
 
-type Props = {};
-
-const FriendRequestInput = (props: Props) => {
+const FriendRequestInput = () => {
   const [inputUsername, setInputUsername] = useState("");
   const [showOutline, setShowOutline] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

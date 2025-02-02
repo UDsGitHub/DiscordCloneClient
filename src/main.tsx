@@ -5,6 +5,7 @@ import "./index.css";
 import {
   ChannelProvider,
   DirectMessagesProvider,
+  ModalProvider,
   ServerProvider,
   SocketProvider,
   ToastProvider,
@@ -18,15 +19,17 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <UserProvider>
         <ToastProvider>
-          <ServerProvider>
-            <ChannelProvider>
-              <SocketProvider>
-                <DirectMessagesProvider>
-                  <App />
-                </DirectMessagesProvider>
-              </SocketProvider>
-            </ChannelProvider>
-          </ServerProvider>
+          <ModalProvider>
+            <ServerProvider>
+              <ChannelProvider>
+                <SocketProvider>
+                  <DirectMessagesProvider>
+                    <App />
+                  </DirectMessagesProvider>
+                </SocketProvider>
+              </ChannelProvider>
+            </ServerProvider>
+          </ModalProvider>
         </ToastProvider>
       </UserProvider>
     </Provider>

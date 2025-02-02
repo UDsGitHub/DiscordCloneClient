@@ -1,9 +1,7 @@
 import FriendRequestInput from "./FriendRequestInput";
 import wumpusSvg from "../../assets/wumpussvg.svg";
 
-type Props = {};
-
-const AddFriendPage = (props: Props) => {
+const AddFriendPage = () => {
   return (
     <div className="text-grey-400">
       <div className="border-b-2 border-grey-500 py-5 px-[30px] leading-5">

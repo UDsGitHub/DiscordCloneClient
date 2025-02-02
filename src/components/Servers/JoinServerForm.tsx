@@ -1,15 +1,17 @@
-import React from 'react'
-import { formStateType } from './AddServerModal';
+import { formStateType } from "./CreateServerModal";
 
 type Props = {
-    onClose: () => void;
-    changeFormState: (formState: formStateType) => void;
-}
+  onClose: () => void;
+  changeFormState: (formState: formStateType) => void;
+};
 
-const JoinServerForm = ({onClose, changeFormState}: Props) => {
-  return (
-    <div>JoinServerForm</div>
-  )
-}
+const JoinServerForm = ({ onClose, changeFormState }: Props) => {
+  if (true) {
+    changeFormState("customize");
+    onClose();
+  }
 
-export default JoinServerForm
+  return <div>JoinServerForm</div>;
+};
+
+export default JoinServerForm;

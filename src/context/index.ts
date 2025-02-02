@@ -4,3 +4,4 @@ export * from "./Socket";
 export * from "./Toast";
 export * from "./Servers";
 export * from "./Routes";
+export * from "./Modal";

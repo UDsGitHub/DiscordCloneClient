@@ -6,18 +6,10 @@ import { ServerType } from "model";
 import ServerAvatar from "./ServerAvatar";
 import { DirectMessagesAvatar } from "components";
 
-interface ServerNavProps {
-  isAddServerModalOpen: boolean;
-  openAddServerModal: () => void;
-}
-
-const ServerNav = ({
-  isAddServerModalOpen,
-  openAddServerModal,
-}: ServerNavProps) => {
-  const [active, setActive] = useState("0");
+const ServerNav = () => {
   const { servers, selectedServer, handleServerSelect } = useServerContext();
   const navigate = useNavigate();
+  const [active, setActive] = useState("0");
 
   const handleClick = (id: string) => {
     if (id === "0") {
@@ -35,10 +27,7 @@ const ServerNav = ({
   return (
     <nav className="bg-grey-800 w-[72px] shrink-0 h-full text-grey-300 pt-4 pr-2 overflow-y-scroll invisible-scroll">
       <DirectMessagesAvatar active={active} onClick={handleClick} />
-      <AddServerButton
-        isAddServerModalOpen={isAddServerModalOpen}
-        openAddServerModal={openAddServerModal}
-      />
+      <AddServerButton />
       <div className="w-full mb-2">
         <span className="bg-grey-500 block mx-auto w-8 h-[2px]"></span>
       </div>

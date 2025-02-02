@@ -10,9 +10,11 @@ export interface CreateServerResponse {
   message: string;
 }
 
-export interface GetChannelInfoRequest {
+export interface CreateChannelRequestType {
+  name: string;
+  type: 0 | 1;
   serverId: string;
-  channelId: string;
+  categoryId?: number;
 }
 
 export const serverApi = createApi({
@@ -37,9 +39,9 @@ export const serverApi = createApi({
       }),
       providesTags: ["servers"],
     }),
-    getChannelInfo: builder.query<ChannelType, GetChannelInfoRequest>({
-      query: ({ serverId, channelId }) => ({
-        url: `server/${serverId}/channels/${channelId}`,
+    getChannelInfo: builder.query<ChannelType, string>({
+      query: (channelId) => ({
+        url: `server/channels/${channelId}`,
         method: "GET",
       }),
       providesTags: ["servers"],
@@ -50,14 +52,23 @@ export const serverApi = createApi({
         method: "POST",
         body: formData,
       }),
-      invalidatesTags: ['servers']
+      invalidatesTags: ["servers"],
     }),
     sendMessageToChannel: builder.mutation<void, ChannelMessageType>({
       query: (message) => ({
-        url: `server/sendChannelMessage`,
+        url: `server/channels/sendMessage`,
         method: "POST",
         body: message,
       }),
+      invalidatesTags: ['servers']
+    }),
+    createServerChannel: builder.mutation<void, CreateChannelRequestType>({
+      query: (request) => ({
+        url: `server/channels/createChannel`,
+        method: "POST",
+        body: request,
+      }),
+      invalidatesTags: ['servers']
     }),
   }),
 });
@@ -68,4 +79,5 @@ export const {
   useLazyGetChannelInfoQuery,
   useCreateServerMutation,
   useSendMessageToChannelMutation,
+  useCreateServerChannelMutation,
 } = serverApi;

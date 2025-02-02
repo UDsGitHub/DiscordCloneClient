@@ -1,10 +1,10 @@
 import { useLazyGetChannelInfoQuery } from "api";
-import { ChannelMessageType, ChannelType } from "model";
+import { ChannelType } from "model";
 import { createContext, ReactNode, useState } from "react";
 
 interface ChannelContextType {
   selectedChannel?: ChannelType;
-  handleChannelSelect: (serverId: string, channelId: string) => void;
+  handleChannelSelect: (channelId: string) => void;
 }
 
 export const ChannelContext = createContext<ChannelContextType>({
@@ -18,8 +18,8 @@ const ChannelProvider = ({ children }: { children: ReactNode }) => {
     ChannelType | undefined
   >(undefined);
 
-  function handleChannelSelect(serverId: string, channelId: string) {
-    getChannelInfo({ serverId, channelId })
+  function handleChannelSelect(channelId: string) {
+    getChannelInfo(channelId)
       .unwrap()
       .then((data) => setSelectedChannel(data))
       .catch((err) => console.log(err));

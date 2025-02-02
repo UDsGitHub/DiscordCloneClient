@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 type AvatarProps = {
   server: any;
   active: number;

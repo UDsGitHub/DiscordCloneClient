@@ -1,2 +1,2 @@
-export {default as ServerNav} from "./ServerNav";
-export {default as AddServerModal} from "./AddServerModal";
+export { default as ServerNav } from "./ServerNav";
+export { default as CreateServerModal } from "./CreateServerModal";

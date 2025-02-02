@@ -1,8 +1,6 @@
 import { BounceLoader } from "react-spinners";
 
-type Props = {};
-
-const PageLoader = (props: Props) => {
+const PageLoader = () => {
   return (
     <div className="h-full bg-grey-700">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

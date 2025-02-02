@@ -40,11 +40,33 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   const [selectedServer, setSelectedServer] = useState<ServerType | undefined>(
     undefined
   );
+  const [servers, setServers] = useState<ServerType[]>(serverList || []);
   const [selectedChannel, setSelectedChannel] = useState<
     ChannelType | undefined
-  >(selectedServer?.channels[0]);
-  const [servers, setServers] = useState<ServerType[]>(serverList || []);
+  >(undefined);
   const { previousRoute } = useRouteTracker();
+
+  useEffect(() => {
+    const initializeSelectedChannel = async () => {
+      if (selectedServer) {
+        let channelToSelect;
+        if (
+          selectedServer.channels.length &&
+          selectedServer.lastSelectedChannel === selectedServer.channels[0].id
+        ) {
+          channelToSelect = selectedServer.channels[0];
+        } else {
+          const res = await getChannelInfo(
+            selectedServer.lastSelectedChannel
+          ).unwrap();
+          channelToSelect = res;
+        }
+        setSelectedChannel(channelToSelect);
+      }
+    };
+
+    initializeSelectedChannel();
+  }, [selectedServer, getChannelInfo]);
 
   useEffect(() => {
     if (user) {
@@ -65,14 +87,14 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   }, [selectedServer]);
 
   useEffect(() => {
-    if (serverList) setServers(serverList)
-  }, [serverList])
+    if (serverList) setServers(serverList);
+  }, [serverList]);
 
   function handleServerSelect(id: string, prevChannelId: string) {
     const serverToSelect = servers.find((server) => server.id === id);
-
     if (id === "0") {
       setSelectedServer(undefined);
+      setSelectedChannel(undefined);
     } else if (selectedServer && id !== selectedServer.id) {
       if (
         previousRoute &&
@@ -101,7 +123,9 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         });
       }
     } else {
-      if (serverToSelect) setSelectedServer(serverToSelect);
+      if (serverToSelect) {
+        setSelectedServer(serverToSelect);
+      }
     }
   }
 
@@ -159,7 +183,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   const handleChannelSelect = (channelId: string, fetched: boolean) => {
     if (selectedServer) {
       if (!fetched) {
-        getChannelInfo({ serverId: selectedServer.id, channelId })
+        getChannelInfo(channelId)
           .unwrap()
           .then((data) => {
             if (selectedChannel && selectedChannel.id !== channelId) {

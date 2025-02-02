@@ -1,3 +1,5 @@
+import StatusBadge from "./StatusBadge";
+
 type AvatarProps = {
   profileImg?: any;
   status?: string;
@@ -5,31 +7,15 @@ type AvatarProps = {
   showStatus?: boolean;
 };
 
-type StatusBadgeProps = {
-  status?: string;
-  size?: "large" | "normal" | "small";
-};
-
 const Avatar = ({
   profileImg,
   size = "normal",
   showStatus = true,
 }: AvatarProps) => {
-  const StatusBadge = ({ status, size = "normal" }: StatusBadgeProps) => {
-    return (
-      <div
-        className={`absolute -right-0.5 -bottom-0.5 bg-green-500 ${
-          size === "normal" ? "w-3.5 h-3.5" : "w-3 h-3"
-        } border-2 border-grey-600 rounded-full z-10 font-bold text-center text-xs cursor-default`}
-      ></div>
-    );
-  };
-
   const getAvatarSize = (size: string) => {
     switch (size) {
       case "large":
         return "h-[80px] w-[80px]";
-        break;
       case "small":
         return "h-6 w-6";
       default:

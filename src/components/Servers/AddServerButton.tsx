@@ -1,14 +1,11 @@
-type Props = {
-  isAddServerModalOpen: boolean;
-  openAddServerModal: () => void;
-};
+import { useModalContext } from "context";
 
-const AddServerButton = ({
-  isAddServerModalOpen,
-  openAddServerModal,
-}: Props) => {
+const AddServerButton = () => {
+  const { isCreateServerModalOpen, openCreateServerModal } = useModalContext();
+
   const handleClick = () => {
-    openAddServerModal();
+    console.log("button clicked");
+    openCreateServerModal();
   };
   return (
     <div
@@ -16,7 +13,7 @@ const AddServerButton = ({
     >
       <button
         className={`h-12 w-12 duration-300 flex justify-center items-center text-2xl ${
-          isAddServerModalOpen
+          isCreateServerModalOpen
             ? "bg-green-500 text-white rounded-2xl"
             : "bg-grey-500 rounded-[50%]"
         }`}

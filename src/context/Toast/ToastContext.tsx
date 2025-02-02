@@ -30,7 +30,7 @@ const ToastProvider = ({ children }: Props) => {
       {children}
       <AnimatePresence>
         {isVisible && (
-          <Toast ref={toastRef} text={text} isVisible={isVisible} />
+          <Toast ref={toastRef} text={text} />
         )}
       </AnimatePresence>
     </ToastContext.Provider>

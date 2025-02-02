@@ -1,8 +1,4 @@
-import React from 'react'
-
-type Props = {}
-
-const ChatBottombar = (props: Props) => {
+const ChatBottombar = () => {
   return (
     <div>ChatBottombar</div>
   )

@@ -1,9 +1,9 @@
-import { ServerList } from "model";
+import { ServerType } from "model";
 
 type ServerAvatarProps = {
-  server: ServerList;
+  server: ServerType;
   active: string;
-  onClick: (server: ServerList) => void;
+  onClick: (server: ServerType) => void;
 };
 
 type NotificationBadgeProps = {

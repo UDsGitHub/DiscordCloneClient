@@ -1,5 +1,5 @@
 import { RequiredText } from "components";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 interface InputProps {
   required?: boolean;
@@ -37,13 +37,6 @@ export default function Input({
       setErrors([]);
     }
   };
-
-  // useEffect(() => {
-  //   const validationErrors = validator ? validator() : []
-  //   if (validationErrors.length === 0) {
-  //     setErrors([]);
-  //   }
-  // }, [value])
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { formStateType } from "./AddServerModal";
+import { formStateType } from "./CreateServerModal";
 import AddServerBaseForm from "./AddServerBaseForm";
 import { useState } from "react";
 import { useToastContext, useUserContext } from "context";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const AddServerCustomizeForm = ({ onClose, changeFormState }: Props) => {
-  const { user } = useUserContext();;
+  const { user } = useUserContext();
   const { showToast } = useToastContext();
   const [serverName, setServerName] = useState(
     user ? `${user.username}'s server` : ""

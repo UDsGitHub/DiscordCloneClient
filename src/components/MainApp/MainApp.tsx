@@ -1,22 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import {
-  AddServerModal,
+  CreateServerModal,
   DirectMessagesPage,
   ServerNav,
   ServersPage,
 } from "components";
 import { useServerContext, useSocketContext, useUserContext } from "context";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import CreateChannelModal from "components/Servers/CreateChannelModal";
 
 const MainApp = () => {
   const { user } = useUserContext();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
-  const [isAddServerModalOpen, setIsAddServerModalOpen] = useState(false);
   const { selectedServer } = useServerContext();
-
-  const openAddServerModal = () => setIsAddServerModalOpen(true);
-  const closeAddServerModal = () => setIsAddServerModalOpen(false);
 
   useEffect(() => {
     if (!user) {
@@ -44,10 +41,7 @@ const MainApp = () => {
 
   return (
     <div className="h-full flex">
-      <ServerNav
-        isAddServerModalOpen={isAddServerModalOpen}
-        openAddServerModal={openAddServerModal}
-      />
+      <ServerNav />
       <main className="grow flex bg-grey-600">
         {selectedServer === undefined ? (
           <DirectMessagesPage />
@@ -55,10 +49,8 @@ const MainApp = () => {
           <ServersPage />
         )}
       </main>
-      <AddServerModal
-        isOpen={isAddServerModalOpen}
-        onClose={closeAddServerModal}
-      />
+      <CreateServerModal />
+      <CreateChannelModal />
     </div>
   );
 };

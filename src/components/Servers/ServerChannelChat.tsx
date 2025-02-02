@@ -11,7 +11,8 @@ interface ServerChannelChatProps {
 
 const ServerChannelChat = ({ channel }: ServerChannelChatProps) => {
   const { user } = useUserContext();
-  const { handleChannelMessageSend } = useServerContext();
+  const { handleChannelMessageSend } =
+    useServerContext();
   const [messageList, setMessageList] = useState<ChannelMessageType[]>(
     channel.messages
   );
@@ -24,7 +25,7 @@ const ServerChannelChat = ({ channel }: ServerChannelChatProps) => {
         author: { userId: user.id, displayName: user.displayName },
         content: messageString,
         timeStamp: new Date(),
-        refMessageId: "",
+        refMessageId: undefined,
       };
       handleChannelMessageSend(message);
       setMessageList((prev) => [...prev, message]);

@@ -2,33 +2,44 @@ import { useState } from "react";
 import AddServerCustomizeForm from "./AddServerCustomizeForm";
 import JoinServerForm from "./JoinServerForm";
 import AddServerTemplateForm from "./AddServerTemplateForm";
-
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
+import { useModalContext } from "context";
 
 export type formStateType = "template" | "customize" | "join";
 
-const AddServerModal = ({ isOpen = false, onClose }: Props) => {
+const CreateServerModal = () => {
+  const { isCreateServerModalOpen: isOpen, closeCreateServerModal: onClose } =
+    useModalContext();
   const [formState, setFormState] = useState<formStateType>("template");
 
   const handleClose = () => {
     onClose();
     setFormState("template");
-  }
+  };
 
   const getFormContent = () => {
     switch (formState) {
       case "customize":
-        return <AddServerCustomizeForm onClose={handleClose} changeFormState={setFormState} />;
+        return (
+          <AddServerCustomizeForm
+            onClose={handleClose}
+            changeFormState={setFormState}
+          />
+        );
       case "join":
         return (
-          <JoinServerForm onClose={handleClose} changeFormState={setFormState} />
+          <JoinServerForm
+            onClose={handleClose}
+            changeFormState={setFormState}
+          />
         );
       case "template":
       default:
-        return <AddServerTemplateForm onClose={handleClose} changeFormState={setFormState} />;
+        return (
+          <AddServerTemplateForm
+            onClose={handleClose}
+            changeFormState={setFormState}
+          />
+        );
     }
   };
 
@@ -47,4 +58,4 @@ const AddServerModal = ({ isOpen = false, onClose }: Props) => {
   );
 };
 
-export default AddServerModal;
+export default CreateServerModal;

@@ -9,7 +9,6 @@ export default function DateSelect({ onChange }: DateSelectProps) {
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
-  const [date, setDate] = useState("");
   const [isError, setIsError] = useState(false);
 
   const daysList: (number | string)[] = ["Day"];
@@ -46,7 +45,6 @@ export default function DateSelect({ onChange }: DateSelectProps) {
       const format = "YYYY-MM-DD";
       const isValid = moment(dateString, format).isValid();
       if (isValid) {
-        setDate(dateString);
         onChange(dateString)
         setIsError(false);
       } else {
