@@ -17,6 +17,10 @@ export interface CreateChannelRequestType {
   categoryId?: number;
 }
 
+export interface CreateChannelResponseType {
+  id: string;
+}
+
 export const serverApi = createApi({
   reducerPath: "server",
   baseQuery: fetchBaseQuery({
@@ -62,13 +66,12 @@ export const serverApi = createApi({
       }),
       invalidatesTags: ['servers']
     }),
-    createServerChannel: builder.mutation<void, CreateChannelRequestType>({
+    createServerChannel: builder.mutation<CreateChannelResponseType, CreateChannelRequestType>({
       query: (request) => ({
         url: `server/channels/createChannel`,
         method: "POST",
         body: request,
       }),
-      invalidatesTags: ['servers']
     }),
   }),
 });

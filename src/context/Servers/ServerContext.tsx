@@ -15,7 +15,8 @@ type ServerContextType = {
   updateLastSelectedChannel: (serverId: string, channelId: string) => void;
   handleChannelMessageSend: (messageContent: ChannelMessageType) => void;
   updateCurrentMessage: (channelId: string, message: string) => void;
-  handleChannelSelect: (channelId: string, fetched: boolean) => void;
+  handleChannelSelect: (channelId: string) => void;
+  addChannelToServer: (channelId: string, categoryId?: number) => void;
 };
 
 type ServerProviderProps = {
@@ -30,12 +31,14 @@ export const ServerContext = createContext<ServerContextType>({
   handleChannelMessageSend: () => {},
   updateCurrentMessage: () => {},
   handleChannelSelect: () => {},
+  addChannelToServer: () => {},
 });
 
 const ServerProvider = ({ children }: ServerProviderProps) => {
   const { user } = useUserContext();
   const [getServers, { data: serverList }] = useLazyGetServersQuery();
-  const [getChannelInfo] = useLazyGetChannelInfoQuery();
+  const [getChannelInfo, { data: currentChannelInfo }] =
+    useLazyGetChannelInfoQuery();
   const [sendMessageToChannel] = useSendMessageToChannelMutation();
   const [selectedServer, setSelectedServer] = useState<ServerType | undefined>(
     undefined
@@ -48,7 +51,11 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
 
   useEffect(() => {
     const initializeSelectedChannel = async () => {
-      if (selectedServer) {
+      if (
+        selectedServer &&
+        selectedChannel &&
+        !isChannelInSelectedServer(selectedChannel.id)
+      ) {
         let channelToSelect;
         if (
           selectedServer.channels.length &&
@@ -90,6 +97,17 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     if (serverList) setServers(serverList);
   }, [serverList]);
 
+  function isChannelInSelectedServer(channelId: string) {
+    const foundInServerChannels = selectedServer?.channels.find(
+      (channel) => channel.id === channelId
+    );
+    const foundInCategoryChannels = selectedServer?.categories.find(
+      (category) =>
+        category.channels.find((channel) => channel.id === channelId)
+    );
+    return selectedServer && (foundInServerChannels || foundInCategoryChannels);
+  }
+
   function handleServerSelect(id: string, prevChannelId: string) {
     const serverToSelect = servers.find((server) => server.id === id);
     if (id === "0") {
@@ -129,6 +147,39 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     }
   }
 
+  async function addChannelToServer(channelId: string, categoryId?: number) {
+    if (selectedServer) {
+      try {
+        const newChannel = await getChannelInfo(channelId).unwrap();
+
+        setSelectedServer((prev) => {
+          if (prev) {
+            if (categoryId) {
+              const newCategories = prev.categories.map((category) => {
+                if (category.id === categoryId) {
+                  return {
+                    ...category,
+                    channels: [...category.channels, newChannel],
+                  };
+                }
+                return category;
+              });
+              return { ...prev, categories: newCategories };
+            } else {
+              const newChannels = [...prev.channels, newChannel];
+              return { ...prev, channels: newChannels };
+            }
+          }
+          return prev;
+        });
+
+        setSelectedChannel(newChannel);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
   function updateLastSelectedChannel(serverId: string, channelId: string) {
     if (selectedServer && channelId !== "") {
       const newServer = {
@@ -142,6 +193,14 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
           return server;
         }
       });
+      setSelectedServer((prev) =>
+        prev
+          ? {
+              ...prev,
+              lastSelectedChannel: channelId,
+            }
+          : prev
+      );
       setServers(updatedServers);
     }
   }
@@ -180,14 +239,17 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     }
   }
 
-  const handleChannelSelect = (channelId: string, fetched: boolean) => {
+  const handleChannelSelect = (channelId: string) => {
     if (selectedServer) {
-      if (!fetched) {
+      if (
+        !currentChannelInfo ||
+        (currentChannelInfo && currentChannelInfo.id !== channelId)
+      ) {
         getChannelInfo(channelId)
           .unwrap()
           .then((data) => {
             if (selectedChannel && selectedChannel.id !== channelId) {
-              updateLastSelectedChannel(selectedServer.id, selectedChannel.id);
+              updateLastSelectedChannel(selectedServer.id, channelId);
             }
             setSelectedChannel(data);
           })
@@ -195,7 +257,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         return;
       }
       if (selectedChannel && selectedChannel.id !== channelId) {
-        updateLastSelectedChannel(selectedServer.id, selectedChannel.id);
+        updateLastSelectedChannel(selectedServer.id, channelId);
       }
       const newChannel = selectedServer.categories[0].channels.length
         ? selectedServer.categories[0].channels[0]
@@ -215,6 +277,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         updateCurrentMessage,
         selectedChannel,
         handleChannelSelect,
+        addChannelToServer,
       }}
     >
       {children}

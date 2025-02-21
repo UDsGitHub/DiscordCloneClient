@@ -3,6 +3,7 @@ import { useState } from "react";
 import { BeatLoader } from "react-spinners";
 import ChannelTypeRadioOptions from "./ChannelTypeRadioOptions";
 import { CreateChannelRequestType, useCreateServerChannelMutation } from "api";
+import { useNavigate } from "react-router-dom";
 
 const CreateChannelModal = () => {
   const {
@@ -13,7 +14,8 @@ const CreateChannelModal = () => {
   const [selectedChannelType, setSelectedChannelType] = useState<0 | 1>(0);
   const [channelName, setChannelName] = useState("");
   const [createServerChannel, { isLoading }] = useCreateServerChannelMutation();
-  const { selectedServer } = useServerContext();
+  const { selectedServer, addChannelToServer, handleChannelSelect } = useServerContext();
+  const navigate = useNavigate();
 
   const handleChannelTypeChange = (value: 0 | 1) => {
     setSelectedChannelType(value);
@@ -34,7 +36,11 @@ const CreateChannelModal = () => {
         categoryId: channelCategory,
       };
       createServerChannel(request)
-        .then(() => {
+        .unwrap()
+        .then((res) => {
+          addChannelToServer(res.id, channelCategory);
+          handleChannelSelect(res.id)
+          navigate(`/channels/${selectedServer?.id}/${res.id}`);
           resetForm();
           onClose();
         })

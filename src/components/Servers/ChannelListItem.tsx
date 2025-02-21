@@ -1,12 +1,19 @@
 import { useServerContext } from "context";
 import { ChannelType } from "model";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   channel: ChannelType;
 };
 
 const ChannelListItem = ({ channel }: Props) => {
-  const { selectedChannel } = useServerContext();
+  const { selectedServer, selectedChannel, handleChannelSelect } =
+    useServerContext();
+  const navigate = useNavigate();
+  const onChannelSelect = (channelId: string) => {
+    handleChannelSelect(channel.id);
+    navigate(`/channels/${selectedServer?.id}/${channelId}`);
+  };
 
   return (
     <li
@@ -16,6 +23,7 @@ const ChannelListItem = ({ channel }: Props) => {
           ? "bg-[#404249] text-grey-300"
           : "hover:bg-grey-450"
       }`}
+      onClick={() => onChannelSelect(channel.id)}
     >
       <button className="flex items-center gap-1">
         {channel.type == 0 ? (
