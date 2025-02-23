@@ -18,7 +18,7 @@ const ChannelListItem = ({ channel }: Props) => {
   return (
     <li
       key={channel.id}
-      className={`mb-2 rounded-md p-[6px] ${
+      className={`cursor-pointer mb-2 rounded-md p-[6px] ${
         selectedChannel?.id == channel.id
           ? "bg-[#404249] text-grey-300"
           : "hover:bg-grey-450"

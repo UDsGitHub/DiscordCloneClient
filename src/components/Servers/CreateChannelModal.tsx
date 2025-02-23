@@ -14,7 +14,7 @@ const CreateChannelModal = () => {
   const [selectedChannelType, setSelectedChannelType] = useState<0 | 1>(0);
   const [channelName, setChannelName] = useState("");
   const [createServerChannel, { isLoading }] = useCreateServerChannelMutation();
-  const { selectedServer, addChannelToServer, handleChannelSelect } = useServerContext();
+  const { selectedServer, addChannelToServer } = useServerContext();
   const navigate = useNavigate();
 
   const handleChannelTypeChange = (value: 0 | 1) => {
@@ -39,7 +39,6 @@ const CreateChannelModal = () => {
         .unwrap()
         .then((res) => {
           addChannelToServer(res.id, channelCategory);
-          handleChannelSelect(res.id)
           navigate(`/channels/${selectedServer?.id}/${res.id}`);
           resetForm();
           onClose();
