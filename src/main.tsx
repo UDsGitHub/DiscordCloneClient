@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 import {
   ChannelProvider,
+  ContextMenuProvider,
   DirectMessagesProvider,
   ModalProvider,
   ServerProvider,
@@ -19,17 +20,19 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <UserProvider>
         <ToastProvider>
-          <ModalProvider>
+          <SocketProvider>
             <ServerProvider>
               <ChannelProvider>
-                <SocketProvider>
-                  <DirectMessagesProvider>
-                    <App />
-                  </DirectMessagesProvider>
-                </SocketProvider>
+                <DirectMessagesProvider>
+                  <ModalProvider>
+                    <ContextMenuProvider>
+                      <App />
+                    </ContextMenuProvider>
+                  </ModalProvider>
+                </DirectMessagesProvider>
               </ChannelProvider>
             </ServerProvider>
-          </ModalProvider>
+          </SocketProvider>
         </ToastProvider>
       </UserProvider>
     </Provider>

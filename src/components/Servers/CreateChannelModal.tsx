@@ -9,7 +9,7 @@ const CreateChannelModal = () => {
   const {
     isCreateChannelModalOpen: isOpen,
     closeCreateChannelModal: onClose,
-    channelCategory,
+    selectedChannelCategory: channelCategory,
   } = useModalContext();
   const [selectedChannelType, setSelectedChannelType] = useState<0 | 1>(0);
   const [channelName, setChannelName] = useState("");
@@ -56,9 +56,12 @@ const CreateChannelModal = () => {
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-grey-500 rounded-lg overflow-hidden max-w-[460px] text-grey-300`}
       >
         <form onSubmit={handleFormSubmit}>
-          <button onClick={onClose}>
+          <button
+            onClick={onClose}
+            className=" text-grey-400 absolute right-4 top-4"
+          >
             <svg
-              className="w-6 h-6 text-grey-400 absolute right-4 top-4"
+              className="w-6 h-6"
               aria-hidden="true"
               role="img"
               xmlns="http://www.w3.org/2000/svg"

@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import {
+  CreateChannelModal,
   CreateServerModal,
+  DeleteChannelModal,
   DirectMessagesPage,
   ServerNav,
   ServersPage,
 } from "components";
 import { useServerContext, useSocketContext, useUserContext } from "context";
 import { useEffect } from "react";
-import CreateChannelModal from "components/Servers/CreateChannelModal";
 
 const MainApp = () => {
   const { user } = useUserContext();
@@ -51,6 +52,7 @@ const MainApp = () => {
       </main>
       <CreateServerModal />
       <CreateChannelModal />
+      <DeleteChannelModal />
     </div>
   );
 };

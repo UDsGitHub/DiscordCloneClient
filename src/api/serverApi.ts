@@ -31,7 +31,7 @@ export const serverApi = createApi({
   endpoints: (builder) => ({
     getServers: builder.query<ServerType[], void>({
       query: () => ({
-        url: "server/",
+        url: "server/getServers",
         method: "GET",
       }),
       providesTags: ["servers"],
@@ -64,13 +64,22 @@ export const serverApi = createApi({
         method: "POST",
         body: message,
       }),
-      invalidatesTags: ['servers']
+      invalidatesTags: ["servers"],
     }),
-    createServerChannel: builder.mutation<CreateChannelResponseType, CreateChannelRequestType>({
+    createServerChannel: builder.mutation<
+      CreateChannelResponseType,
+      CreateChannelRequestType
+    >({
       query: (request) => ({
         url: `server/channels/createChannel`,
         method: "POST",
         body: request,
+      }),
+    }),
+    deleteServerChannel: builder.mutation<void, string>({
+      query: (channelId) => ({
+        url: `server/channels/deleteChannel/${channelId}`,
+        method: "DELETE",
       }),
     }),
   }),
@@ -83,4 +92,5 @@ export const {
   useCreateServerMutation,
   useSendMessageToChannelMutation,
   useCreateServerChannelMutation,
+  useDeleteServerChannelMutation,
 } = serverApi;

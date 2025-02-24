@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ChannelMessageType, ChannelType, ServerType } from "model";
 import {
+  useDeleteServerChannelMutation,
   useLazyGetChannelInfoQuery,
   useLazyGetServersQuery,
   useSendMessageToChannelMutation,
@@ -17,6 +18,7 @@ type ServerContextType = {
   updateCurrentMessage: (channelId: string, message: string) => void;
   handleChannelSelect: (channelId: string) => void;
   addChannelToServer: (channelId: string, categoryId?: number) => void;
+  deleteChannel: (channelId: string) => void;
 };
 
 type ServerProviderProps = {
@@ -32,6 +34,7 @@ export const ServerContext = createContext<ServerContextType>({
   updateCurrentMessage: () => {},
   handleChannelSelect: () => {},
   addChannelToServer: () => {},
+  deleteChannel: () => {},
 });
 
 const ServerProvider = ({ children }: ServerProviderProps) => {
@@ -39,14 +42,23 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   const [getServers] = useLazyGetServersQuery();
   const [getChannelInfo] = useLazyGetChannelInfoQuery();
   const [sendMessageToChannel] = useSendMessageToChannelMutation();
+  const [deleteServerChannel] = useDeleteServerChannelMutation();
   const [selectedServer, setSelectedServer] = useState<ServerType | undefined>(
     undefined
   );
+  const [selectedServerId, setSelectedServerId] = useState<string>("0");
   const [servers, setServers] = useState<ServerType[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<
     ChannelType | undefined
   >(undefined);
   const { previousRoute } = useRouteTracker();
+
+  useEffect(() => {
+    const serverToSelect = servers.find(
+      (server) => server.id === selectedServerId
+    );
+    setSelectedServer(serverToSelect);
+  }, [servers, selectedServerId]);
 
   useEffect(() => {
     const initializeSelectedChannel = async () => {
@@ -103,7 +115,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   function handleServerSelect(id: string, prevChannelId: string) {
     const serverToSelect = servers.find((server) => server.id === id);
     if (id === "0") {
-      setSelectedServer(undefined);
+      setSelectedServerId(id);
     } else if (selectedServer && id !== selectedServer.id) {
       if (
         previousRoute &&
@@ -125,14 +137,14 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         setServers(newServers);
       }
       if (serverToSelect) {
-        setSelectedServer((prev) => {
-          if (prev) updateLastSelectedChannel(prev.id, prevChannelId);
-          return serverToSelect;
+        setSelectedServerId((prev) => {
+          if (prev) updateLastSelectedChannel(prev, prevChannelId);
+          return serverToSelect.id;
         });
       }
     } else {
       if (serverToSelect) {
-        setSelectedServer(serverToSelect);
+        setSelectedServerId(serverToSelect.id);
       }
     }
   }
@@ -173,7 +185,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
 
         // Update both states
         handleChannelSelect(channelId);
-        setSelectedServer(updatedSelectedServer);
+        setSelectedServerId(updatedSelectedServer.id);
         setServers(updatedServers);
       } catch (error) {
         console.log(error);
@@ -183,19 +195,18 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
 
   function updateLastSelectedChannel(serverId: string, channelId: string) {
     if (selectedServer && channelId !== "") {
-      setSelectedServer((prev) => {
+      setSelectedServerId((prev) => {
         if (!prev) return prev;
 
-        const newServer = {
-          ...prev,
-          lastSelectedChannel: channelId,
-        };
-        const updatedServers = servers.map((server) =>
-          server.id === serverId ? newServer : server
-        );
+        const updatedServers = servers.map((server) => {
+          if (server.id === serverId) {
+            return { ...server, lastSelectedChannel: channelId };
+          }
+          return server;
+        });
 
         setServers(updatedServers);
-        return newServer;
+        return prev;
       });
     }
   }
@@ -249,6 +260,46 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     }
   };
 
+  const deleteChannel = (channelId: string) => {
+    try {
+      if (selectedServer) {
+        // API DELETE
+        deleteServerChannel(channelId);
+
+        // STATE DELETE
+        const newServerChannels = selectedServer.channels.filter(
+          (channel) => channel.id !== channelId
+        );
+        const channelCategory = selectedServer.categories.find((category) =>
+          category.channels.find((channel) => channel.id === channelId)
+        );
+        let newServerCategories = selectedServer.categories;
+        if (channelCategory) {
+          const newChannels = channelCategory.channels.filter(
+            (channel) => channel.id !== channelId
+          );
+          newServerCategories = selectedServer.categories.map((category) =>
+            category.id === channelCategory.id
+              ? { ...channelCategory, channels: newChannels }
+              : category
+          );
+        }
+        const newServer = {
+          ...selectedServer,
+          channels: newServerChannels,
+          categories: newServerCategories,
+        };
+        setServers((prev) =>
+          prev.map((server) =>
+            server.id === newServer.id ? newServer : server
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ServerContext.Provider
       value={{
@@ -261,6 +312,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         selectedChannel,
         handleChannelSelect,
         addChannelToServer,
+        deleteChannel,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { useServerContext } from "context";
+import { useContextMenuContext, useServerContext } from "context";
 import { ChannelType } from "model";
 import { useNavigate } from "react-router-dom";
 
@@ -9,21 +9,30 @@ type Props = {
 const ChannelListItem = ({ channel }: Props) => {
   const { selectedServer, selectedChannel, handleChannelSelect } =
     useServerContext();
+  const { showContextMenu } = useContextMenuContext();
   const navigate = useNavigate();
   const onChannelSelect = (channelId: string) => {
     handleChannelSelect(channel.id);
     navigate(`/channels/${selectedServer?.id}/${channelId}`);
   };
 
+  const handleContextMenu = (e: React.MouseEvent<HTMLLIElement>) => {
+    if (e.button === 2) {
+      e.preventDefault();
+      showContextMenu([e.clientX, e.clientY], channel.id);
+    }
+  };
+
   return (
     <li
-      key={channel.id}
+      id={channel.id}
       className={`cursor-pointer mb-2 rounded-md p-[6px] ${
         selectedChannel?.id == channel.id
           ? "bg-[#404249] text-grey-300"
           : "hover:bg-grey-450"
       }`}
       onClick={() => onChannelSelect(channel.id)}
+      onContextMenu={handleContextMenu}
     >
       <button className="flex items-center gap-1">
         {channel.type == 0 ? (
