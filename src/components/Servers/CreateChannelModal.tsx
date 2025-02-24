@@ -1,5 +1,5 @@
 import { useModalContext, useServerContext } from "context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import ChannelTypeRadioOptions from "./ChannelTypeRadioOptions";
 import { CreateChannelRequestType, useCreateServerChannelMutation } from "api";
@@ -9,9 +9,12 @@ const CreateChannelModal = () => {
   const {
     isCreateChannelModalOpen: isOpen,
     closeCreateChannelModal: onClose,
-    selectedChannelCategory: channelCategory,
+    selectedChannelCategory,
+    channelType: defaultChannelType,
   } = useModalContext();
-  const [selectedChannelType, setSelectedChannelType] = useState<0 | 1>(0);
+  const [selectedChannelType, setSelectedChannelType] = useState<0 | 1>(
+    defaultChannelType
+  );
   const [channelName, setChannelName] = useState("");
   const [createServerChannel, { isLoading }] = useCreateServerChannelMutation();
   const { selectedServer, addChannelToServer } = useServerContext();
@@ -26,6 +29,16 @@ const CreateChannelModal = () => {
     setChannelName("");
   };
 
+  const getCategoryName = () => {
+    if (selectedServer && selectedChannelCategory) {
+      const category = selectedServer.categories.find(category => category.id === selectedChannelCategory)
+      if (category) {
+        return `in ${category.name}`;
+      }
+    }
+    return ''
+  }
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedServer && channelName !== "") {
@@ -33,12 +46,12 @@ const CreateChannelModal = () => {
         name: channelName,
         type: selectedChannelType,
         serverId: selectedServer.id,
-        categoryId: channelCategory,
+        categoryId: selectedChannelCategory,
       };
       createServerChannel(request)
         .unwrap()
         .then((res) => {
-          addChannelToServer(res.id, channelCategory);
+          addChannelToServer(res.id, selectedChannelCategory);
           navigate(`/channels/${selectedServer?.id}/${res.id}`);
           resetForm();
           onClose();
@@ -46,6 +59,25 @@ const CreateChannelModal = () => {
         .catch((e) => console.log(e));
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isOpen && !target.closest(".modal")) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
+    setSelectedChannelType(defaultChannelType);
+  }, [defaultChannelType]);
+
   return (
     <div
       className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 ${
@@ -53,7 +85,7 @@ const CreateChannelModal = () => {
       }`}
     >
       <div
-        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-grey-500 rounded-lg overflow-hidden max-w-[460px] text-grey-300`}
+        className={`modal absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-grey-500 rounded-lg overflow-hidden max-w-[460px] text-grey-300`}
       >
         <form onSubmit={handleFormSubmit}>
           <button
@@ -76,10 +108,10 @@ const CreateChannelModal = () => {
               ></path>
             </svg>
           </button>
-          <div className="px-4 pb-2">
+          <div className="p-4">
             <div className="mb-4">
               <p className="text-xl">Create Channel</p>
-              <p className="text-xs text-grey-400">in Text Channels</p>
+              <p className="text-xs text-grey-400">{getCategoryName()}</p>
             </div>
             <ChannelTypeRadioOptions
               selectedChannelType={selectedChannelType}

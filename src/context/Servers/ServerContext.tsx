@@ -39,7 +39,7 @@ export const ServerContext = createContext<ServerContextType>({
 
 const ServerProvider = ({ children }: ServerProviderProps) => {
   const { user } = useUserContext();
-  const [getServers] = useLazyGetServersQuery();
+  const [getServers, { data: serversList }] = useLazyGetServersQuery();
   const [getChannelInfo] = useLazyGetChannelInfoQuery();
   const [sendMessageToChannel] = useSendMessageToChannelMutation();
   const [deleteServerChannel] = useDeleteServerChannelMutation();
@@ -92,6 +92,10 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         .catch((err) => console.log(err));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (serversList) setServers(serversList);
+  }, [serversList]);
 
   function isChannelInSelectedServer(channelId: string): boolean {
     if (selectedServer) {

@@ -1,5 +1,4 @@
 import { useModalContext, useServerContext } from "context";
-import { useMemo } from "react";
 
 const DeleteChannelModal = () => {
   const {
@@ -7,31 +6,11 @@ const DeleteChannelModal = () => {
     closeDeleteChannelModal: onClose,
     editingChannel,
   } = useModalContext();
-  const { selectedServer, deleteChannel } = useServerContext();
-
-  const channel = useMemo(() => {
-    if (selectedServer) {
-      let eventChannel = undefined;
-      eventChannel = selectedServer.channels.find(
-        (channel) => channel.id === editingChannel
-      );
-      if (!eventChannel) {
-        selectedServer.categories.forEach((category) => {
-          const channel = category.channels.find(
-            (channel) => channel.id === editingChannel
-          );
-          if (channel) {
-            eventChannel = channel;
-          }
-        });
-      }
-      return eventChannel;
-    }
-  }, [editingChannel]);
+  const { deleteChannel } = useServerContext();
 
   const handleDeleteClick = () => {
     if (editingChannel) {
-      deleteChannel(editingChannel);
+      deleteChannel(editingChannel.id);
       onClose()
     }
   };
@@ -48,7 +27,7 @@ const DeleteChannelModal = () => {
         <div className="p-4 bg-grey-500">
           <p className="text-lg font-bold mb-4">Delete Channel</p>
           <p className="mb-4">
-            Are you sure you want to delete #{channel?.name}? This cannot be
+            Are you sure you want to delete #{editingChannel?.name}? This cannot be
             undone
           </p>
         </div>

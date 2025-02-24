@@ -21,7 +21,7 @@ export interface ChannelType {
   categoryId: number;
   name: string;
   topic: string;
-  type: number;
+  type: 0 | 1;
   messages: ChannelMessageType[];
   currentMessage: string;
 }

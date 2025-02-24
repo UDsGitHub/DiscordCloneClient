@@ -8,10 +8,12 @@ interface ModalContextType {
   isEditChannelModalOpen: boolean;
   isDeleteChannelModalOpen: boolean;
   selectedChannelCategory?: number;
-  editingChannel?: string;
+  channelType: 0 | 1;
+  editingChannel?: ChannelType;
+  getEditingChannel: (channelId: string) => ChannelType | undefined;
   openCreateServerModal: () => void;
   closeCreateServerModal: () => void;
-  openCreateChannelModal: (categoryId?: number) => void;
+  openCreateChannelModal: (categoryId?: number, channelType?: 0 | 1) => void;
   closeCreateChannelModal: () => void;
   openEditChannelModal: (channelId: string) => void;
   closeEditChannelModal: () => void;
@@ -25,7 +27,9 @@ export const ModalContext = createContext<ModalContextType>({
   isEditChannelModalOpen: false,
   isDeleteChannelModalOpen: false,
   selectedChannelCategory: undefined,
+  channelType: 0,
   editingChannel: undefined,
+  getEditingChannel: () => undefined,
   openCreateServerModal: () => {},
   closeCreateServerModal: () => {},
   openCreateChannelModal: () => {},
@@ -41,20 +45,23 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useState(false);
   const [isEditChannelModalOpen, setIsEditChannelModalOpen] = useState(false);
-  const [isDeleteChannelModalOpen, setIsDeleteChannelModalOpen] = useState(false);
+  const [isDeleteChannelModalOpen, setIsDeleteChannelModalOpen] =
+    useState(false);
   const [selectedChannelCategory, setSelectedChannelCategory] = useState<
     number | undefined
   >(undefined);
-  const [editingChannel, setEditingChannel] = useState<string | undefined>(
+  const [editingChannel, setEditingChannel] = useState<ChannelType | undefined>(
     undefined
   );
+  const [channelType, setChannelType] = useState<0 | 1>(0);
   const { selectedServer } = useServerContext();
 
   const openCreateServerModal = () => setIsCreateServerModalOpen(true);
   const closeCreateServerModal = () => setIsCreateServerModalOpen(false);
 
-  const openCreateChannelModal = (categoryId?: number) => {
+  const openCreateChannelModal = (categoryId?: number, channelType?: 0 | 1) => {
     setSelectedChannelCategory(categoryId);
+    setChannelType(channelType ?? 0);
     setIsCreateChannelModalOpen(true);
   };
   const closeCreateChannelModal = () => {
@@ -63,8 +70,16 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const openEditChannelModal = (channelId: string) => {
+    const eventChannel = getEditingChannel(channelId);
+    if (eventChannel) {
+      setEditingChannel(eventChannel);
+      setIsEditChannelModalOpen(true);
+    }
+  };
+
+  const getEditingChannel = (channelId: string) => {
+    let eventChannel = undefined;
     if (selectedServer) {
-      let eventChannel = undefined;
       eventChannel = selectedServer.channels.find(
         (channel) => channel.id === channelId
       );
@@ -78,28 +93,27 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
           }
         });
       }
-      if (eventChannel) {
-        // remember to come back and move this functionality of finding the channel from the server to the actual settings menu
-        setEditingChannel(channelId);
-        setIsEditChannelModalOpen(true);
-      }
     }
+    return eventChannel;
   };
 
   const closeEditChannelModal = () => {
     setIsEditChannelModalOpen(false);
-    setEditingChannel(undefined); 
+    setEditingChannel(undefined);
   };
 
   const openDeleteChannelModal = (channelId: string) => {
-    setIsDeleteChannelModalOpen(true);
-    setEditingChannel(channelId)
-  }
+    const eventChannel = getEditingChannel(channelId)
+    if (eventChannel) {
+      setEditingChannel(eventChannel);
+      setIsDeleteChannelModalOpen(true);
+    }
+  };
 
   const closeDeleteChannelModal = () => {
-    setIsDeleteChannelModalOpen(false)
-    setEditingChannel(undefined); 
-  }
+    setIsDeleteChannelModalOpen(false);
+    setEditingChannel(undefined);
+  };
 
   return (
     <ModalContext.Provider
@@ -110,6 +124,7 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
         isEditChannelModalOpen,
         selectedChannelCategory,
         editingChannel,
+        getEditingChannel,
         openCreateChannelModal,
         openCreateServerModal,
         closeCreateChannelModal,
@@ -118,6 +133,7 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
         closeEditChannelModal,
         openDeleteChannelModal,
         closeDeleteChannelModal,
+        channelType,
       }}
     >
       {children}

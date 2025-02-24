@@ -7,19 +7,31 @@ type Props = {
 };
 
 const ChannelItemContextMenu = ({ coord, channelId }: Props) => {
-  const { openEditChannelModal, openDeleteChannelModal } = useModalContext();
+  const {
+    openEditChannelModal,
+    openDeleteChannelModal,
+    openCreateChannelModal,
+    getEditingChannel,
+  } = useModalContext();
   const { isVisible, hideContextMenu } = useContextMenuContext();
   const liStyles =
     "hover:bg-purple-500 hover:text-white rounded-sm px-[8px] py-[6px]";
+
+  const editingChannel = getEditingChannel(channelId);
 
   const handleEditMenuClick = () => {
     if (channelId !== "") openEditChannelModal(channelId);
   };
 
+  const handleCreateTextChannelClick = () => {
+    openCreateChannelModal(editingChannel?.categoryId, editingChannel?.type);
+    hideContextMenu();
+  };
+
   const handleDeleteMenuClick = () => {
-    openDeleteChannelModal(channelId)
-    hideContextMenu()
-  }
+    openDeleteChannelModal(channelId);
+    hideContextMenu();
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -44,17 +56,17 @@ const ChannelItemContextMenu = ({ coord, channelId }: Props) => {
         <li className={liStyles}>
           <button onClick={handleEditMenuClick}>Edit Channel</button>
         </li>
-        <li className={liStyles}>
-          <button>Create Text Channel</button>
+        <li className={liStyles} onClick={handleCreateTextChannelClick}>
+          <button>
+            Create {editingChannel?.type === 0 ? "Text" : "Voice"} Channel
+          </button>
         </li>
         <li
           className={
             "hover:bg-red-600 hover:text-white rounded-sm px-[8px] py-[6px] text-red-600"
           }
         >
-          <button onClick={handleDeleteMenuClick}>
-            Delete Channel
-          </button>
+          <button onClick={handleDeleteMenuClick}>Delete Channel</button>
         </li>
       </ul>
     </div>
