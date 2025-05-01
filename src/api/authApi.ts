@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_URL } from "api";
+import { API_URL } from "../config";
 import { User } from "model";
 
 interface RegisterParams {
