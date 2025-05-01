@@ -13,9 +13,6 @@ const ChannelOverviewForm = ({
   channelTopicValue,
   onChannelNameChange,
   onChannelTopicChange,
-  showSaveChanges,
-  saveChanges,
-  resetChanges,
 }: Props) => {
   const handleChannelNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChannelNameChange(e.target.value);

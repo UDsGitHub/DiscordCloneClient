@@ -2,11 +2,9 @@ import { useModalContext, useServerContext } from "context";
 import { useEffect, useState } from "react";
 import ChannelOverviewForm from "./ChannelOverviewForm";
 
-type Props = {};
-
 type selectedTabType = "overview" | "other";
 
-const ChannelSettingsModal = (props: Props) => {
+const ChannelSettingsModal = () => {
   const {
     isChannelSettingsModalOpen: isOpen,
     closeChannelSettingsModal: onClose,
