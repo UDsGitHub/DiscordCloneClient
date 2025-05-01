@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_URL } from "api";
 import { User } from "model";
 
 interface RegisterParams {
@@ -27,7 +28,7 @@ interface LoginResponse {
 export const authApi = createApi({
   reducerPath: "auth",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000",
+    baseUrl: API_URL,
     credentials: "include",
   }),
   endpoints: (builder) => ({

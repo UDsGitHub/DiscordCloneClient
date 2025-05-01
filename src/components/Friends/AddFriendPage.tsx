@@ -11,7 +11,6 @@ const AddFriendPage = () => {
         </p>
         <FriendRequestInput />
       </div>
-
       <div className="flex flex-col items-center py-5 px-[30px]">
         <img src={wumpusSvg} alt="waiting on friends" className="mb-12" />
         <p>Wumpus is waiting on friends. You don’t have to though!</p>

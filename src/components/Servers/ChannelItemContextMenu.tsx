@@ -8,7 +8,7 @@ type Props = {
 
 const ChannelItemContextMenu = ({ coord, channelId }: Props) => {
   const {
-    openEditChannelModal,
+    openChannelSettingsModal,
     openDeleteChannelModal,
     openCreateChannelModal,
     getEditingChannel,
@@ -20,7 +20,8 @@ const ChannelItemContextMenu = ({ coord, channelId }: Props) => {
   const editingChannel = getEditingChannel(channelId);
 
   const handleEditMenuClick = () => {
-    if (channelId !== "") openEditChannelModal(channelId);
+    openChannelSettingsModal(channelId);
+    hideContextMenu();
   };
 
   const handleCreateTextChannelClick = () => {

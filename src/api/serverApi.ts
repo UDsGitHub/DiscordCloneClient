@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_URL } from "api";
 import { ChannelMessageType, ChannelType, ServerType } from "model";
 
 export interface CreateServerRequest {
@@ -24,7 +25,7 @@ export interface CreateChannelResponseType {
 export const serverApi = createApi({
   reducerPath: "server",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000",
+    baseUrl: API_URL,
     credentials: "include",
   }),
   tagTypes: ["servers"],

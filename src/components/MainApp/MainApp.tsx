@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
+  ChannelSettingsModal,
   CreateChannelModal,
   CreateServerModal,
   DeleteChannelModal,
@@ -53,6 +54,7 @@ const MainApp = () => {
       <CreateServerModal />
       <CreateChannelModal />
       <DeleteChannelModal />
+      <ChannelSettingsModal />
     </div>
   );
 };

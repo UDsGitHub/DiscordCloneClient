@@ -1,4 +1,5 @@
 import { useModalContext, useServerContext } from "context";
+import { useEffect } from "react";
 
 const DeleteChannelModal = () => {
   const {
@@ -15,9 +16,23 @@ const DeleteChannelModal = () => {
     }
   };
 
+  useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (isOpen && !target.closest(".context-menu")) {
+          onClose();
+        }
+      };
+  
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [onClose]);
+
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 ${
+      className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-[60] ${
         isOpen ? "block" : "hidden"
       }`}
     >

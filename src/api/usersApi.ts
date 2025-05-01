@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { DmUserListType, User, SendMessageToUserRequest, FriendRequest } from "model";
+import { API_URL } from "api";
+
 
 export const usersApi = createApi({
   reducerPath: "user",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000",
+    baseUrl: API_URL,
     credentials: "include",
   }),
   tagTypes: ["user", "dmUsers", "friends", "friendRequests"],
