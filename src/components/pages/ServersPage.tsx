@@ -4,10 +4,12 @@ import ServerChannelChat from "../Servers/ServerChannelChat";
 
 const ServersPage = () => {
   const { selectedServer, selectedChannel } = useServerContext();
-  
+
   if (!selectedServer || !selectedChannel) {
     return null;
   }
+
+  console.log("over here selected channel is: ", selectedChannel);
 
   return (
     <>

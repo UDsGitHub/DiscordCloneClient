@@ -11,8 +11,7 @@ interface ServerChannelChatProps {
 
 const ServerChannelChat = ({ channel }: ServerChannelChatProps) => {
   const { user } = useUserContext();
-  const { handleChannelMessageSend } =
-    useServerContext();
+  const { handleChannelMessageSend } = useServerContext();
   const [messageList, setMessageList] = useState<ChannelMessageType[]>(
     channel.messages
   );

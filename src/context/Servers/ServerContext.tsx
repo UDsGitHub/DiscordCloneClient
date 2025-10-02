@@ -51,12 +51,34 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   const [selectedChannel, setSelectedChannel] = useState<
     ChannelType | undefined
   >(undefined);
+  const [selectedChannelId, setSelectedChannelId] = useState<
+    string | undefined
+  >(undefined);
   const { previousRoute } = useRouteTracker();
 
   useEffect(() => {
     const serverToSelect = servers.find(
       (server) => server.id === selectedServerId
     );
+
+    let channelToSelect = undefined;
+    channelToSelect = serverToSelect?.channels.find(
+      (channel) => channel.id === selectedChannelId
+    );
+    if (!channelToSelect) {
+      serverToSelect?.categories.find(
+        (category) =>
+          (channelToSelect = category.channels.find((channel) => {
+            if (channel.id === selectedChannelId) {
+              channelToSelect = channel;
+              return true;
+            }
+            return false;
+          }))
+      );
+    }
+
+    setSelectedChannel(channelToSelect);
     setSelectedServer(serverToSelect);
   }, [servers, selectedServerId]);
 
@@ -64,20 +86,34 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     const initializeSelectedChannel = async () => {
       if (selectedServer) {
         let channelToSelect;
+        const selectedChannelNotMatching =
+          selectedChannel === undefined ||
+          selectedChannel?.id !== selectedChannelId;
+        console.log("hello world ", selectedChannel);
         if (selectedChannel && isChannelInSelectedServer(selectedChannel.id)) {
           const res = await getChannelInfo(
             selectedServer.lastSelectedChannel
           ).unwrap();
-          channelToSelect = res;
-        } else if (selectedServer.channels.length) {
+          channelToSelect = {
+            ...res,
+            currentMessage: selectedChannel.currentMessage,
+          };
+        } else if (
+          selectedServer.channels.length &&
+          selectedChannelNotMatching
+        ) {
           channelToSelect = selectedServer.channels[0];
-        } else if (selectedServer.categories.length) {
+        } else if (
+          selectedServer.categories.length &&
+          selectedChannelNotMatching
+        ) {
           const categoryWithChannels = selectedServer.categories.find(
             (category) => category.channels.length
           );
           channelToSelect = categoryWithChannels?.channels[0];
         }
         setSelectedChannel(channelToSelect);
+        setSelectedChannelId(channelToSelect?.id);
       }
     };
 
@@ -234,9 +270,28 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         }
         return channel;
       });
+      const newServerCategories = selectedServer.categories.map((category) => {
+        if (
+          selectedChannel?.categoryId &&
+          category.id === selectedChannel.categoryId
+        ) {
+          const newChannels = category.channels.map((channel) => {
+            if (channel.id === channelId) {
+              const newChannel = { ...channel, currentMessage: message };
+              return newChannel;
+            }
+            return channel;
+          });
+          return { ...category, channels: newChannels };
+        } else {
+          return category;
+        }
+      });
+
       const newServer = {
         ...selectedServer,
         channels: newChannels,
+        categories: newServerCategories,
       };
       const updatedServers = servers.map((server) => {
         if (server.id === selectedServer.id) {
@@ -258,6 +313,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
             updateLastSelectedChannel(selectedServer.id, channelId);
           }
           setSelectedChannel(data);
+          setSelectedChannelId(channelId);
         })
         .catch((err) => console.log(err));
       return;
