@@ -9,8 +9,6 @@ const ServersPage = () => {
     return null;
   }
 
-  console.log("over here selected channel is: ", selectedChannel);
-
   return (
     <>
       <ServerSidebar server={selectedServer} />

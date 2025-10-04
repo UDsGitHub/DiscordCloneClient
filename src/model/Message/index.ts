@@ -2,7 +2,7 @@ export type Message = {
   id?: string;
   fromId: string;
   toId: string;
-  message: string;
+  content: string;
   timeStamp: Date;
 };
 

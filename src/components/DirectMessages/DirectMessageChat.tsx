@@ -28,7 +28,7 @@ const DirectMessageChat = () => {
       const message = {
         fromId: user.id,
         toId: currentDmUser.userId,
-        message: messageString,
+        content: messageString,
         timeStamp: today,
       };
       sendMessage(message);
@@ -123,7 +123,7 @@ const DirectMessageChat = () => {
         </div>
         {/* Message List */}
         {messageList.map((message, index) => (
-          <MessageChip key={index} message={message.message} />
+          <MessageChip key={index} message={message.content} />
         ))}
       </div>
       <div className="p-4 absolute bottom-0 w-full">

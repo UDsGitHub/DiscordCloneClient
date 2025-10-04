@@ -68,7 +68,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
     if (user) {
       sendMessageToUser({
         toUserId: message.toId,
-        message: message.message,
+        message: message.content,
       });
     }
   }
@@ -106,6 +106,6 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
   );
 };
 
-export const useDirectMessageContext = () => useContext(DirectMessagesContext)
+export const useDirectMessageContext = () => useContext(DirectMessagesContext);
 
 export default DirectMessagesProvider;
