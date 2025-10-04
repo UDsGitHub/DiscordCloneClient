@@ -4,6 +4,7 @@ import {
   FriendsPage,
 } from "components";
 import { useDirectMessageContext } from "context";
+import { Outlet } from "react-router-dom";
 
 const DirectMessagesPage = () => {
   const { selectedSidebarTab } = useDirectMessageContext();
@@ -12,7 +13,7 @@ const DirectMessagesPage = () => {
     <>
       <DirectMessagesSidebar />
       <div className="grow flex flex-col relative">
-        {selectedSidebarTab === "0" ? <FriendsPage /> : <DirectMessageChat />}
+        <Outlet />
       </div>
     </>
   );

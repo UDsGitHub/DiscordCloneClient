@@ -16,12 +16,6 @@ const DirectMessagesSidebar = () => {
     navigate("/channels/@me");
   };
 
-  useEffect(() => {
-    if (selectedSidebarTab === "0") {
-      navigate("/channels/@me");
-    }
-  }, [selectedSidebarTab]);
-
   return (
     <Sidebar
       topBar={

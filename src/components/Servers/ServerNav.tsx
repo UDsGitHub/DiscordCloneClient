@@ -15,6 +15,7 @@ const ServerNav = () => {
     if (id === "0") {
       setActive(id);
       handleServerSelect("0", selectedServer?.lastSelectedChannel ?? "");
+      navigate('/channels/@me')
     }
   };
 

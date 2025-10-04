@@ -1,1 +1,1 @@
-export {default as MainApp} from './MainApp'
+export {default as AppLayout} from './AppLayout'

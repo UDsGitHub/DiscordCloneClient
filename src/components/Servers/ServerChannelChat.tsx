@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageChip } from "components";
 import { useServerContext, useUserContext } from "context";
-import { ChannelMessageType, ChannelType } from "model";
+import { ChannelMessageType } from "model";
 import ChannelTopBar from "./ChannelTopBar";
 import ChannelMessageInput from "./ChannelMessageInput";
 
-interface ServerChannelChatProps {
-  channel: ChannelType;
-}
-
-const ServerChannelChat = ({ channel }: ServerChannelChatProps) => {
+const ServerChannelChat = () => {
   const { user } = useUserContext();
-  const { handleChannelMessageSend } = useServerContext();
+  const { selectedChannel: channel, handleChannelMessageSend } =
+    useServerContext();
   const [messageList, setMessageList] = useState<ChannelMessageType[]>(
-    channel.messages
+    channel?.messages || []
   );
   const scrollableRef = useRef<HTMLDivElement>(null);
 
+  if (!channel) {
+    return <div>Loading</div>;
+  }
+
   function handleSendMessage(messageString: string) {
-    if (user) {
+    if (user && channel) {
       const message = {
         channelId: channel.id,
         author: { userId: user.id, displayName: user.displayName },

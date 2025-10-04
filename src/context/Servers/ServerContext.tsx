@@ -156,6 +156,7 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     const serverToSelect = servers.find((server) => server.id === id);
     if (id === "0") {
       setSelectedServerId(id);
+      
     } else if (selectedServer && id !== selectedServer.id) {
       if (
         previousRoute &&

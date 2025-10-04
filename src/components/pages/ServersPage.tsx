@@ -11,9 +11,9 @@ const ServersPage = () => {
 
   return (
     <>
-      <ServerSidebar server={selectedServer} />
+      <ServerSidebar />
       <div className="grow flex flex-col relative">
-        <ServerChannelChat channel={selectedChannel} />
+        <ServerChannelChat />
       </div>
     </>
   );

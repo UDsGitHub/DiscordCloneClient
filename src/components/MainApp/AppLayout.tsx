@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   ChannelSettingsModal,
   CreateChannelModal,
@@ -11,7 +11,7 @@ import {
 import { useServerContext, useSocketContext, useUserContext } from "context";
 import { useEffect } from "react";
 
-const MainApp = () => {
+const AppLayout = () => {
   const { user } = useUserContext();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
@@ -45,11 +45,7 @@ const MainApp = () => {
     <div className="h-full flex">
       <ServerNav />
       <main className="grow flex bg-grey-600">
-        {selectedServer === undefined ? (
-          <DirectMessagesPage />
-        ) : (
-          <ServersPage />
-        )}
+        <Outlet />
       </main>
       <CreateServerModal />
       <CreateChannelModal />
@@ -59,4 +55,4 @@ const MainApp = () => {
   );
 };
 
-export default MainApp;
+export default AppLayout;

@@ -1,22 +1,49 @@
-import { LoginRegisterPage, MainApp } from "components";
+import {
+  LoginRegisterPage,
+  AppLayout,
+  DirectMessagesPage,
+  ServersPage,
+  FriendsPage,
+  DirectMessageChat,
+} from "components";
 import { RouteTrackerProvider } from "context";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <RouteTrackerProvider>
-        <Routes>
-          <Route path="/" element={<Navigate to="/channels/@me" replace />} />
-          <Route path="/channels/@me" element={<MainApp />} />
-          <Route path="/channels/@me/:id" element={<MainApp />} />
-          <Route path="/channels/:serverId/:channelId" element={<MainApp />} />
-          <Route path="/login" element={<LoginRegisterPage />} />
-          <Route path="/register" element={<LoginRegisterPage />} />
-        </Routes>
-      </RouteTrackerProvider>
-    </BrowserRouter>
-  );
+  const router = createBrowserRouter([
+    { index: true, element: <Navigate to="/channels/@me" replace /> },
+    {
+      path: "/channels",
+      Component: AppLayout,
+      children: [
+        {
+          path: "/channels/@me",
+          Component: DirectMessagesPage,
+          children: [
+            {
+              index: true,
+              Component: FriendsPage,
+            },
+            {
+              path: "/channels/@me/:id",
+              Component: DirectMessageChat,
+            },
+          ],
+        },
+        { path: "/channels/:serverId/:channelId", Component: ServersPage },
+      ],
+    },
+    { path: "/login", Component: LoginRegisterPage },
+    { path: "/register", Component: LoginRegisterPage },
+  ]);
+  return <RouterProvider router={router} />;
 }
 
 export default App;

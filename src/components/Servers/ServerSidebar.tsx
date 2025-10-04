@@ -1,13 +1,15 @@
 import { Sidebar } from "components";
-import { ServerType } from "model";
 import CategoryList from "./CategoryList";
 import ChannelList from "./ChannelList";
+import { useServerContext } from "context";
 
-type Props = {
-  server: ServerType;
-};
+const ServerSidebar = () => {
+  const { selectedServer: server } = useServerContext();
 
-const ServerSidebar = ({ server }: Props) => {
+  if (!server) {
+    return <div>Loading</div>
+  }
+
   return (
     <Sidebar
       topBar={
