@@ -4,18 +4,15 @@ import {
   CreateChannelModal,
   CreateServerModal,
   DeleteChannelModal,
-  DirectMessagesPage,
   ServerNav,
-  ServersPage,
 } from "components";
-import { useServerContext, useSocketContext, useUserContext } from "context";
+import { useSocketContext, useUserContext } from "context";
 import { useEffect } from "react";
 
 const AppLayout = () => {
   const { user } = useUserContext();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
-  const { selectedServer } = useServerContext();
 
   useEffect(() => {
     if (!user) {

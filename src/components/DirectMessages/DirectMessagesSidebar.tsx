@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { Sidebar } from "../common";
 import { DirectMessagesContext } from "context";
 import DirectMessageUser from "./DirectMessageUser";

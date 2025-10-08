@@ -6,11 +6,7 @@ import {
   FriendsPage,
   DirectMessageChat,
 } from "components";
-import { RouteTrackerProvider } from "context";
 import {
-  BrowserRouter,
-  Routes,
-  Route,
   Navigate,
   RouterProvider,
   createBrowserRouter,
