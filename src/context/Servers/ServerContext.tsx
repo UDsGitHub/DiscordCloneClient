@@ -1,12 +1,24 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { ChannelMessageType, ChannelType, ServerType } from "model";
 import {
+  getChannelInfoSelector,
+  selectChannelInfo,
+  serverApi,
   useDeleteServerChannelMutation,
   useLazyGetChannelInfoQuery,
   useLazyGetServersQuery,
   useSendMessageToChannelMutation,
 } from "api";
 import { useRouteTracker, useUserContext } from "context";
+import { useSelector } from "react-redux";
+import { RootState } from "@reduxjs/toolkit/query";
+import store from "api/store";
 
 type ServerContextType = {
   servers: ServerType[];
@@ -48,72 +60,65 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   );
   const [selectedServerId, setSelectedServerId] = useState<string>("0");
   const [servers, setServers] = useState<ServerType[]>([]);
-  const [selectedChannel, setSelectedChannel] = useState<
-    ChannelType | undefined
-  >(undefined);
   const [selectedChannelId, setSelectedChannelId] = useState<
     string | undefined
   >(undefined);
+  // fetch counter to ignore stale fetches when switching quickly
+  const channelFetchCounter = useRef(0);
   const { previousRoute } = useRouteTracker();
 
   useEffect(() => {
     const serverToSelect = servers.find(
       (server) => server.id === selectedServerId
     );
-
-    let channelToSelect = undefined;
-    channelToSelect = serverToSelect?.channels.find(
-      (channel) => channel.id === selectedChannelId
-    );
-    if (!channelToSelect) {
-      serverToSelect?.categories.find(
-        (category) =>
-          (channelToSelect = category.channels.find((channel) => {
-            if (channel.id === selectedChannelId) {
-              channelToSelect = channel;
-              return true;
-            }
-            return false;
-          }))
-      );
-    }
-
-    setSelectedChannel(channelToSelect);
     setSelectedServer(serverToSelect);
   }, [servers, selectedServerId]);
 
   useEffect(() => {
     const initializeSelectedChannel = async () => {
       if (selectedServer) {
-        let channelToSelect;
-        const selectedChannelNotMatching =
-          selectedChannel === undefined ||
-          selectedChannel?.id !== selectedChannelId;
-        console.log("hello world ", selectedChannel);
-        if (selectedChannel && isChannelInSelectedServer(selectedChannel.id)) {
-          const res = await getChannelInfo(
-            selectedServer.lastSelectedChannel
-          ).unwrap();
-          channelToSelect = {
-            ...res,
-            currentMessage: selectedChannel.currentMessage,
-          };
-        } else if (
-          selectedServer.channels.length &&
-          selectedChannelNotMatching
-        ) {
-          channelToSelect = selectedServer.channels[0];
-        } else if (
-          selectedServer.categories.length &&
-          selectedChannelNotMatching
-        ) {
-          const categoryWithChannels = selectedServer.categories.find(
-            (category) => category.channels.length
-          );
-          channelToSelect = categoryWithChannels?.channels[0];
+        // When a server is selected, fetch its lastSelectedChannel details
+        const lastChannelId = selectedServer.lastSelectedChannel;
+        const hasBeenFetched =
+          useSelector(() =>
+            getChannelInfoSelector(lastChannelId)(store.getState())
+          ).data !== undefined;
+        if (hasBeenFetched) return;
+        if (lastChannelId) {
+          const fetchId = ++channelFetchCounter.current;
+          try {
+            console.log("hereB");
+            const res = await getChannelInfo(lastChannelId, true).unwrap();
+            // ignore stale responses
+            if (fetchId !== channelFetchCounter.current) return;
+
+            // merge currentMessage if we already had a draft for that channel
+            const existingChannel = findChannelInServer(
+              selectedServer,
+              lastChannelId
+            )?.channel;
+            const merged = existingChannel
+              ? { ...res, currentMessage: existingChannel.currentMessage }
+              : res;
+            const updatedServers = updateServerChannel(
+              selectedServer.id,
+              merged,
+              servers
+            );
+            setServers(updatedServers);
+            setSelectedChannelId(lastChannelId);
+          } catch (e) {
+            // silently ignore fetch errors for initial load
+            // console.log(e);
+          }
+        } else {
+          // pick a sensible default if there is no lastSelectedChannel
+          const firstChannel =
+            selectedServer.channels[0] ||
+            selectedServer.categories.find((c) => c.channels.length)
+              ?.channels[0];
+          if (firstChannel) setSelectedChannelId(firstChannel.id);
         }
-        setSelectedChannel(channelToSelect);
-        setSelectedChannelId(channelToSelect?.id);
       }
     };
 
@@ -133,30 +138,62 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     if (serversList) setServers(serversList);
   }, [serversList]);
 
-  function isChannelInSelectedServer(channelId: string): boolean {
-    if (selectedServer) {
-      for (const channel of selectedServer.channels) {
-        if (channel.id === channelId) {
-          return true;
-        }
-      }
+  // derive selectedChannel from the selectedServer and selectedChannelId
+  const selectedChannel: ChannelType | undefined = selectedServer
+    ? findChannelInServer(selectedServer, selectedChannelId || "").channel
+    : undefined;
 
-      for (const category of selectedServer.categories) {
-        for (const channel of category.channels) {
-          if (channel.id === channelId) {
-            return true;
-          }
-        }
-      }
+  // helper to find a channel in a server (either top-level or in categories)
+  function findChannelInServer(
+    server: ServerType,
+    channelId: string
+  ): { channel?: ChannelType; categoryId?: number } {
+    const channel = server.channels.find((c) => c.id === channelId);
+    if (channel) return { channel };
+    for (const category of server.categories) {
+      const ch = category.channels.find((c) => c.id === channelId);
+      if (ch) return { channel: ch, categoryId: category.id };
     }
-    return false;
+    return {};
+  }
+
+  // helper to update a single channel inside a server and return updated servers array
+  function updateServerChannel(
+    serverId: string,
+    newChannel: ChannelType,
+    serversList: ServerType[]
+  ) {
+    return serversList.map((server) => {
+      if (server.id !== serverId) return server;
+      // shallow copy server
+      const updatedServer = { ...server } as ServerType & { categories: any };
+      // try top-level channels
+      if (server.channels.find((c) => c.id === newChannel.id)) {
+        updatedServer.channels = server.channels.map((c) =>
+          c.id === newChannel.id ? newChannel : c
+        );
+        return updatedServer;
+      }
+      // try categories
+      updatedServer.categories = server.categories.map((category) => {
+        if (category.channels.find((c) => c.id === newChannel.id)) {
+          return {
+            ...category,
+            channels: category.channels.map((c) =>
+              c.id === newChannel.id ? newChannel : c
+            ),
+          };
+        }
+        return category;
+      });
+      return updatedServer;
+    });
   }
 
   function handleServerSelect(id: string, prevChannelId: string) {
     const serverToSelect = servers.find((server) => server.id === id);
     if (id === "0") {
       setSelectedServerId(id);
-      
     } else if (selectedServer && id !== selectedServer.id) {
       if (
         previousRoute &&
@@ -225,9 +262,10 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         });
 
         // Update both states
+        setServers(updatedServers);
+        // select the new channel and ensure server holds full detail
         handleChannelSelect(channelId);
         setSelectedServerId(updatedSelectedServer.id);
-        setServers(updatedServers);
       } catch (error) {
         console.log(error);
       }
@@ -238,14 +276,11 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     if (selectedServer && channelId !== "") {
       setSelectedServerId((prev) => {
         if (!prev) return prev;
-
-        const updatedServers = servers.map((server) => {
-          if (server.id === serverId) {
-            return { ...server, lastSelectedChannel: channelId };
-          }
-          return server;
-        });
-
+        const updatedServers = servers.map((server) =>
+          server.id === serverId
+            ? { ...server, lastSelectedChannel: channelId }
+            : server
+        );
         setServers(updatedServers);
         return prev;
       });
@@ -255,7 +290,80 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   function handleChannelMessageSend(messageContent: ChannelMessageType) {
     if (user) {
       try {
-        sendMessageToChannel(messageContent);
+        // Optimistic update: append a temporary pending message to the channel
+        const channelId = messageContent.channelId;
+        if (!selectedServer) return;
+
+        const tempId = `temp-${Date.now()}-${Math.floor(
+          Math.random() * 10000
+        )}`;
+        const tempMessage: any = {
+          id: tempId,
+          channelId,
+          content:
+            (messageContent as any).message ??
+            (messageContent as any).content ??
+            "",
+          author: user,
+          createdAt: new Date().toISOString(),
+          pending: true,
+        };
+
+        // append temp message into the channel immediately
+        const existing = findChannelInServer(selectedServer, channelId).channel;
+        const newChannel = existing
+          ? {
+              ...existing,
+              messages: [...(existing.messages || []), tempMessage],
+            }
+          : ({ id: channelId, messages: [tempMessage] } as ChannelType);
+
+        setServers((prev) =>
+          updateServerChannel(selectedServer.id, newChannel, prev)
+        );
+
+        // send the message via API
+        sendMessageToChannel(messageContent)
+          .unwrap()
+          .then(() => {
+            // On success, re-fetch latest channel to reconcile authoritative state
+            const fetchId = ++channelFetchCounter.current;
+            console.log("here");
+            getChannelInfo(channelId)
+              .unwrap()
+              .then((res) => {
+                if (fetchId !== channelFetchCounter.current) return;
+                const existingChannel = findChannelInServer(
+                  selectedServer,
+                  channelId
+                )?.channel;
+                const merged = existingChannel
+                  ? { ...res, currentMessage: existingChannel.currentMessage }
+                  : res;
+                setServers((prev) =>
+                  updateServerChannel(selectedServer.id, merged, prev)
+                );
+              })
+              .catch(() => {});
+          })
+          .catch(() => {
+            // On failure remove the temp message
+            const existingChannel = findChannelInServer(
+              selectedServer,
+              channelId
+            ).channel;
+            if (existingChannel) {
+              const cleaned = {
+                ...existingChannel,
+                messages: (existingChannel.messages || []).filter(
+                  (m: any) => m.id !== tempId
+                ),
+              } as ChannelType;
+              setServers((prev) =>
+                updateServerChannel(selectedServer.id, cleaned, prev)
+              );
+            }
+          });
       } catch (e) {
         console.log(e);
       }
@@ -263,57 +371,37 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   }
 
   function updateCurrentMessage(channelId: string, message: string) {
-    if (selectedServer) {
-      const newChannels = selectedServer.channels.map((channel) => {
-        if (channel.id === channelId) {
-          const newChannel = { ...channel, currentMessage: message };
-          return newChannel;
-        }
-        return channel;
-      });
-      const newServerCategories = selectedServer.categories.map((category) => {
-        if (
-          selectedChannel?.categoryId &&
-          category.id === selectedChannel.categoryId
-        ) {
-          const newChannels = category.channels.map((channel) => {
-            if (channel.id === channelId) {
-              const newChannel = { ...channel, currentMessage: message };
-              return newChannel;
-            }
-            return channel;
-          });
-          return { ...category, channels: newChannels };
-        } else {
-          return category;
-        }
-      });
-
-      const newServer = {
-        ...selectedServer,
-        channels: newChannels,
-        categories: newServerCategories,
-      };
-      const updatedServers = servers.map((server) => {
-        if (server.id === selectedServer.id) {
-          return newServer;
-        } else {
-          return server;
-        }
-      });
-      setServers(updatedServers);
-    }
+    if (!selectedServer) return;
+    const updatedChannel = {
+      ...(findChannelInServer(selectedServer, channelId).channel || {
+        id: channelId,
+      }),
+      currentMessage: message,
+    } as ChannelType;
+    setServers((prev) =>
+      updateServerChannel(selectedServer.id, updatedChannel, prev)
+    );
   }
 
   const handleChannelSelect = (channelId: string) => {
     if (selectedServer) {
+      const fetchId = ++channelFetchCounter.current;
+      console.log("hereA");
       getChannelInfo(channelId)
         .unwrap()
         .then((data) => {
-          if (selectedChannel && selectedChannel.id !== channelId) {
-            updateLastSelectedChannel(selectedServer.id, channelId);
-          }
-          setSelectedChannel(data);
+          if (fetchId !== channelFetchCounter.current) return; // stale
+          const existing = findChannelInServer(
+            selectedServer,
+            channelId
+          )?.channel;
+          const merged = existing
+            ? { ...data, currentMessage: existing.currentMessage }
+            : data;
+          setServers((prev) =>
+            updateServerChannel(selectedServer.id, merged, prev)
+          );
+          updateLastSelectedChannel(selectedServer.id, channelId);
           setSelectedChannelId(channelId);
         })
         .catch((err) => console.log(err));

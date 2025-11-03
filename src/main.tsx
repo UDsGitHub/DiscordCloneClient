@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import {
-  ChannelProvider,
   ContextMenuProvider,
   DirectMessagesProvider,
   ModalProvider,
@@ -22,15 +21,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ToastProvider>
           <SocketProvider>
             <ServerProvider>
-              <ChannelProvider>
-                <DirectMessagesProvider>
-                  <ModalProvider>
-                    <ContextMenuProvider>
-                      <App />
-                    </ContextMenuProvider>
-                  </ModalProvider>
-                </DirectMessagesProvider>
-              </ChannelProvider>
+              <DirectMessagesProvider>
+                <ModalProvider>
+                  <ContextMenuProvider>
+                    <App />
+                  </ContextMenuProvider>
+                </ModalProvider>
+              </DirectMessagesProvider>
             </ServerProvider>
           </SocketProvider>
         </ToastProvider>

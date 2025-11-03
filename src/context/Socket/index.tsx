@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
+import store from "../../api/store";
+import { serverApi } from "api";
 
 type SocketContextType = {
   socket: Socket | null;
@@ -24,6 +26,32 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
 
     serverSocket.on("connect", () => {
       console.log("Connected to server", serverSocket.id);
+    });
+
+    // Wire incoming new message events to update RTK Query cache for the channel
+    serverSocket.on("message:new", (msg: any) => {
+      try {
+        const channelId = msg.channelId;
+        if (!channelId) return;
+
+        // Merge new message into cached channel data if present
+        store.dispatch(
+          serverApi.util.updateQueryData(
+            "getChannelInfo",
+            channelId,
+            (draft: any) => {
+              // avoid duplicates by id
+              if (!draft.messages) draft.messages = [];
+              const exists = draft.messages.find((m: any) => m.id === msg.id);
+              if (!exists) {
+                draft.messages.push(msg);
+              }
+            }
+          ) as any
+        );
+      } catch (e) {
+        // ignore errors coming from updateQueryData
+      }
     });
 
     serverSocket.on("connect_error", (err) => {
@@ -52,4 +80,4 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   );
 };
 
-export const useSocketContext = () => useContext(SocketContext)
+export const useSocketContext = () => useContext(SocketContext);

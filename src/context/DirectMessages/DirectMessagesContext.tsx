@@ -65,6 +65,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
   }
 
   function sendMessage(message: Message) {
+    // TODO: on message send, emit socket event so that component can receive event and invalidate api call for refetching
     if (user) {
       sendMessageToUser({
         toUserId: message.toId,

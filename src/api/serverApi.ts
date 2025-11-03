@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../config";
 import { ChannelMessageType, ChannelType, ServerType } from "model";
+import store from "./store";
+import { useSelector } from "react-redux";
 
 export interface CreateServerRequest {
   serverName: string;
@@ -28,7 +30,7 @@ export const serverApi = createApi({
     baseUrl: API_URL,
     credentials: "include",
   }),
-  tagTypes: ["servers"],
+  tagTypes: ["servers", "Channel"],
   endpoints: (builder) => ({
     getServers: builder.query<ServerType[], void>({
       query: () => ({
@@ -49,7 +51,9 @@ export const serverApi = createApi({
         url: `server/channels/${channelId}`,
         method: "GET",
       }),
-      providesTags: ["servers"],
+      providesTags: (_result, _error, channelId) => [
+        { type: "Channel", id: channelId },
+      ],
     }),
     createServer: builder.mutation<void, FormData>({
       query: (formData) => ({
@@ -65,7 +69,10 @@ export const serverApi = createApi({
         method: "POST",
         body: message,
       }),
-      invalidatesTags: ["servers"],
+      // invalidate only the affected channel so RTK Query will refetch it
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Channel", id: arg.channelId },
+      ],
     }),
     createServerChannel: builder.mutation<
       CreateChannelResponseType,
@@ -95,3 +102,5 @@ export const {
   useCreateServerChannelMutation,
   useDeleteServerChannelMutation,
 } = serverApi;
+
+export const getChannelInfoSelector = serverApi.endpoints.getChannelInfo.select;
