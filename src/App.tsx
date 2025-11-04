@@ -39,7 +39,7 @@ function App() {
     { path: "/login", Component: LoginRegisterPage },
     { path: "/register", Component: LoginRegisterPage },
   ]);
-  return <RouterProvider router={router} />;
+  return<RouterProvider router={router} />;
 }
 
 export default App;

@@ -18,7 +18,7 @@ export interface ServerMemberType {
 
 export interface ChannelType {
   id: string;
-  categoryId: number;
+  categoryId?: number;
   name: string;
   topic: string;
   type: 0 | 1;
@@ -34,7 +34,7 @@ export interface CategoryType {
 }
 
 export interface ChannelMessageType {
-  id?: string;
+  id?: number;
   channelId: string;
   author: { userId: string; displayName: string };
   content: string;

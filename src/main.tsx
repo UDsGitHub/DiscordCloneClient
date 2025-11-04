@@ -17,21 +17,21 @@ import store from "api/store.ts";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <UserProvider>
-        <ToastProvider>
-          <SocketProvider>
-            <ServerProvider>
-              <DirectMessagesProvider>
-                <ModalProvider>
-                  <ContextMenuProvider>
-                    <App />
-                  </ContextMenuProvider>
-                </ModalProvider>
-              </DirectMessagesProvider>
-            </ServerProvider>
-          </SocketProvider>
-        </ToastProvider>
-      </UserProvider>
+        <UserProvider>
+          <ToastProvider>
+            <SocketProvider>
+              <ServerProvider>
+                <DirectMessagesProvider>
+                  <ModalProvider>
+                    <ContextMenuProvider>
+                      <App />
+                    </ContextMenuProvider>
+                  </ModalProvider>
+                </DirectMessagesProvider>
+              </ServerProvider>
+            </SocketProvider>
+          </ToastProvider>
+        </UserProvider>
     </Provider>
   </React.StrictMode>
 );

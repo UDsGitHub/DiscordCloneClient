@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Login, Register } from "components";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRouteTracker, useUserContext } from "context";
+import { RouteTrackerProvider, useRouteTracker, useUserContext } from "context";
 
 const LoginRegisterPage = () => {
   const { previousRoute, currentRoute } = useRouteTracker();
@@ -12,7 +12,7 @@ const LoginRegisterPage = () => {
   const [loginVisible, setLoginVisible] = useState(
     currentURL === "/login" ? true : false
   );
-  const { user } = useUserContext();;
+  const { user } = useUserContext();
 
   useEffect(() => {
     if (
@@ -31,10 +31,12 @@ const LoginRegisterPage = () => {
     ) {
       return navigate(previousRoute, { replace: true });
     }
-    if (user) {
+    if (user && previousRoute) {
+      return navigate(previousRoute, { replace: true });
+    } else if (user) {
       return navigate("/channels/@me", { replace: true });
     }
-  }, [user]);
+  }, [user, previousRoute, currentRoute]);
 
   function toggleForm() {
     if (currentURL === "/login") {
@@ -46,15 +48,17 @@ const LoginRegisterPage = () => {
   }
 
   return (
-    <div className="bg-purple-500 h-full flex justify-center items-center">
-      <AnimatePresence>
-        {loginVisible ? (
-          <Login toggleForm={toggleForm} />
-        ) : (
-          <Register toggleForm={toggleForm} />
-        )}
-      </AnimatePresence>
-    </div>
+    <RouteTrackerProvider>
+      <div className="bg-purple-500 h-full flex justify-center items-center">
+        <AnimatePresence>
+          {loginVisible ? (
+            <Login toggleForm={toggleForm} />
+          ) : (
+            <Register toggleForm={toggleForm} />
+          )}
+        </AnimatePresence>
+      </div>
+    </RouteTrackerProvider>
   );
 };
 

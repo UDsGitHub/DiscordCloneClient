@@ -6,19 +6,19 @@ import {
   DeleteChannelModal,
   ServerNav,
 } from "components";
-import { useSocketContext, useUserContext } from "context";
+import { RouteTrackerProvider, useSocketContext, useUserContext } from "context";
 import { useEffect } from "react";
 
 const AppLayout = () => {
-  const { user } = useUserContext();
   const { socket } = useSocketContext();
+  const { user, fetchingUser } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!fetchingUser && !user) {
       navigate("/login", { replace: true });
     }
-  }, [user]);
+  }, [user, fetchingUser]);
 
   useEffect(() => {
     if (socket) {
@@ -39,16 +39,18 @@ const AppLayout = () => {
   }, [socket]);
 
   return (
-    <div className="h-full flex">
-      <ServerNav />
-      <main className="grow flex bg-grey-600">
-        <Outlet />
-      </main>
-      <CreateServerModal />
-      <CreateChannelModal />
-      <DeleteChannelModal />
-      <ChannelSettingsModal />
-    </div>
+    <RouteTrackerProvider>
+      <div className="h-full flex">
+        <ServerNav />
+        <main className="grow flex bg-grey-600">
+          <Outlet />
+        </main>
+        <CreateServerModal />
+        <CreateChannelModal />
+        <DeleteChannelModal />
+        <ChannelSettingsModal />
+      </div>
+    </RouteTrackerProvider>
   );
 };
 
