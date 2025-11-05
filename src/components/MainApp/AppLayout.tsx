@@ -6,7 +6,15 @@ import {
   DeleteChannelModal,
   ServerNav,
 } from "components";
-import { RouteTrackerProvider, useSocketContext, useUserContext } from "context";
+import {
+  ContextMenuProvider,
+  DirectMessagesProvider,
+  ModalProvider,
+  ServerProvider,
+  SocketProvider,
+  useSocketContext,
+  useUserContext,
+} from "context";
 import { useEffect } from "react";
 
 const AppLayout = () => {
@@ -15,7 +23,7 @@ const AppLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!fetchingUser && !user) {
+    if (!fetchingUser && user === null) {
       navigate("/login", { replace: true });
     }
   }, [user, fetchingUser]);
@@ -39,18 +47,26 @@ const AppLayout = () => {
   }, [socket]);
 
   return (
-    <RouteTrackerProvider>
-      <div className="h-full flex">
-        <ServerNav />
-        <main className="grow flex bg-grey-600">
-          <Outlet />
-        </main>
-        <CreateServerModal />
-        <CreateChannelModal />
-        <DeleteChannelModal />
-        <ChannelSettingsModal />
-      </div>
-    </RouteTrackerProvider>
+    <SocketProvider>
+      <ServerProvider>
+        <DirectMessagesProvider>
+          <ModalProvider>
+            <ContextMenuProvider>
+              <div className="h-full flex">
+                <ServerNav />
+                <main className="grow flex bg-grey-600">
+                  <Outlet />
+                </main>
+                <CreateServerModal />
+                <CreateChannelModal />
+                <DeleteChannelModal />
+                <ChannelSettingsModal />
+              </div>
+            </ContextMenuProvider>
+          </ModalProvider>
+        </DirectMessagesProvider>
+      </ServerProvider>
+    </SocketProvider>
   );
 };
 

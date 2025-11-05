@@ -1,21 +1,30 @@
 import { useState } from "react";
 import AddServerButton from "./AddServerButton";
 import { useServerContext } from "context";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ServerType } from "model";
 import ServerAvatar from "./ServerAvatar";
 import { DirectMessagesAvatar } from "components";
 
+const initializeActiveTab = (currentRoute?: string) => {
+  if (currentRoute && !currentRoute.includes("@me")) {
+    return currentRoute.split("/")[2];
+  } else {
+    return "0";
+  }
+};
+
 const ServerNav = () => {
   const { servers, selectedServer, handleServerSelect } = useServerContext();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [active, setActive] = useState("0");
+  const [active, setActive] = useState(() => initializeActiveTab(location.pathname));
 
   const handleClick = (id: string) => {
     if (id === "0") {
       setActive(id);
       handleServerSelect("0", selectedServer?.lastSelectedChannel ?? "");
-      navigate('/channels/@me')
+      navigate("/channels/@me");
     }
   };
 

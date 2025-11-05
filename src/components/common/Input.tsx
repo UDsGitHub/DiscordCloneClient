@@ -65,7 +65,7 @@ export default function Input({
           ref={inputRef}
         />
         {type === "password" && (
-          <button onClick={toggleVisibilty}>
+          <span onClick={toggleVisibilty} className="cursor-pointer">
             {isObscure ? (
               <svg
                 className="w-6 h-6 text-white"
@@ -106,7 +106,7 @@ export default function Input({
                 />
               </svg>
             )}
-          </button>
+          </span>
         )}
       </div>
       <div className="mt-2">

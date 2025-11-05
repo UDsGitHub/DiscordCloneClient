@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Login, Register } from "components";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RouteTrackerProvider, useRouteTracker, useUserContext } from "context";
+import { useUserContext } from "context";
 
 const LoginRegisterPage = () => {
-  const { previousRoute, currentRoute } = useRouteTracker();
   const navigate = useNavigate();
   const location = useLocation();
   const currentURL = location.pathname;
@@ -15,28 +14,10 @@ const LoginRegisterPage = () => {
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (
-      user &&
-      !previousRoute &&
-      currentRoute &&
-      currentRoute !== "/login" &&
-      currentRoute !== "/register"
-    ) {
-      return navigate(currentRoute, { replace: true });
-    } else if (
-      user &&
-      previousRoute &&
-      previousRoute !== "/login" &&
-      previousRoute !== "/register"
-    ) {
-      return navigate(previousRoute, { replace: true });
-    }
-    if (user && previousRoute) {
-      return navigate(previousRoute, { replace: true });
-    } else if (user) {
+    if (user) {
       return navigate("/channels/@me", { replace: true });
     }
-  }, [user, previousRoute, currentRoute]);
+  }, [user]);
 
   function toggleForm() {
     if (currentURL === "/login") {
@@ -48,17 +29,15 @@ const LoginRegisterPage = () => {
   }
 
   return (
-    <RouteTrackerProvider>
-      <div className="bg-purple-500 h-full flex justify-center items-center">
-        <AnimatePresence>
-          {loginVisible ? (
-            <Login toggleForm={toggleForm} />
-          ) : (
-            <Register toggleForm={toggleForm} />
-          )}
-        </AnimatePresence>
-      </div>
-    </RouteTrackerProvider>
+    <div className="bg-purple-500 h-full flex justify-center items-center">
+      <AnimatePresence>
+        {loginVisible ? (
+          <Login toggleForm={toggleForm} />
+        ) : (
+          <Register toggleForm={toggleForm} />
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

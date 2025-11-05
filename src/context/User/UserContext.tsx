@@ -4,7 +4,7 @@ import { useGetUserQuery } from "api";
 import { PageLoader } from "components";
 
 type UserContextType = {
-  user: User | undefined;
+  user: User | null | undefined;
   setUser: (user: User | undefined) => any;
   logout: () => any;
   fetchingUser: boolean;
@@ -22,23 +22,23 @@ export const UserContext = createContext<UserContextType>({
 });
 
 const UserProvider = ({ children }: UserProviderProps) => {
-  const { data: userData, isFetching: fetchingUser } = useGetUserQuery();
-  const [user, setUser] = useState<User | undefined>(userData);
-
+  const { data: userData, isFetching, isLoading } = useGetUserQuery();
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
     if (userData) {
       setUser(userData);
+    } else if (!isFetching && !isLoading) {
+      setUser(null);
     }
-  }, [userData])
-  
+  }, [userData, isFetching, isLoading]);
 
   function logout() {
     setUser(undefined);
   }
 
-  if (fetchingUser) {
-    return <PageLoader />
+  if (user === undefined && (isFetching || isLoading)) {
+    return <PageLoader />;
   }
 
   return (
@@ -47,7 +47,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         user,
         setUser,
         logout,
-        fetchingUser,
+        fetchingUser: isFetching || isLoading,
       }}
     >
       {children}
@@ -55,6 +55,6 @@ const UserProvider = ({ children }: UserProviderProps) => {
   );
 };
 
-export const useUserContext = () => useContext(UserContext)
+export const useUserContext = () => useContext(UserContext);
 
 export default UserProvider;

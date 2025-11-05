@@ -6,8 +6,9 @@ import {
   useLazyGetServersQuery,
   useSendMessageToChannelMutation,
 } from "api";
-import { useRouteTracker, useUserContext } from "context";
+import { useUserContext } from "context";
 import { ServerModel } from "model/Servers/ServerModel";
+import { useLocation } from "react-router-dom";
 
 type ServerContextType = {
   servers: ServerType[];
@@ -25,6 +26,11 @@ type ServerProviderProps = {
   children: React.ReactNode;
 };
 
+const LAST_SELECTED_CHANNELS = "lastSelectedChannels";
+type LastSelectedChannelsCache = {
+  [id: string]: string;
+};
+
 export const ServerContext = createContext<ServerContextType>({
   servers: [],
   selectedServer: undefined,
@@ -35,6 +41,34 @@ export const ServerContext = createContext<ServerContextType>({
   addChannelToServer: () => {},
   deleteChannel: () => {},
 });
+
+const getLastSelectedChannel = (selectedServer: ServerModel) => {
+  const lastSelectedChannels = localStorage.getItem(LAST_SELECTED_CHANNELS);
+  if (!lastSelectedChannels) return selectedServer.lastSelectedChannel;
+
+  const parsedStore = JSON.parse(
+    lastSelectedChannels
+  ) as LastSelectedChannelsCache;
+  return parsedStore[selectedServer.id] || selectedServer.lastSelectedChannel;
+};
+
+const updateLastSelectedChannel = (serverId: string, channelId: string) => {
+  const lastSelectedChannels = localStorage.getItem(LAST_SELECTED_CHANNELS);
+  if (lastSelectedChannels) {
+    const parsedStore = JSON.parse(
+      lastSelectedChannels
+    ) as LastSelectedChannelsCache;
+    localStorage.setItem(
+      LAST_SELECTED_CHANNELS,
+      JSON.stringify({ ...parsedStore, [serverId]: channelId })
+    );
+  } else {
+    localStorage.setItem(
+      LAST_SELECTED_CHANNELS,
+      JSON.stringify({ [serverId]: channelId })
+    );
+  }
+};
 
 const ServerProvider = ({ children }: ServerProviderProps) => {
   const { user } = useUserContext();
@@ -49,16 +83,22 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   const [selectedChannelId, setSelectedChannelId] = useState<
     string | undefined
   >(undefined);
-  const { previousRoute } = useRouteTracker();
+  const location = useLocation();
   const selectedChannel = selectedServer?.findChannelInServer(
     selectedChannelId || ""
   );
 
   useEffect(() => {
+    const initializeServer = () => {
+      if (servers.length && location) {
+        const routeServerId = location.pathname.split("/")[2];
+        setSelectedServer(servers.find((it) => it.id === routeServerId));
+      }
+    };
     const initializeSelectedChannel = async () => {
       if (selectedServer) {
         // When a server is selected, fetch its lastSelectedChannel details
-        const lastChannelId = selectedServer.lastSelectedChannel;
+        const lastChannelId = getLastSelectedChannel(selectedServer);
         const foundChannel = selectedServer.findChannelInServer(lastChannelId);
         if (lastChannelId && foundChannel) {
           if (!foundChannel.hasBeenFetched()) {
@@ -77,8 +117,9 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
       }
     };
 
+    initializeServer();
     initializeSelectedChannel();
-  }, [selectedServer]);
+  }, [selectedServer, servers, location.pathname]);
 
   useEffect(() => {
     if (user) {
@@ -92,26 +133,12 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   function handleServerSelect(id: string, prevChannelId: string) {
     const serverToSelect = servers.find((server) => server.id === id);
     if (id === "0") {
+      if (selectedServer && prevChannelId !== "") {
+        selectedServer.lastSelectedChannel = prevChannelId;
+        updateLastSelectedChannel(selectedServer.id, prevChannelId);
+      }
       setSelectedServer(undefined);
-    } else if (selectedServer && id !== selectedServer.id) {
-      if (
-        previousRoute &&
-        !previousRoute.includes("@me") &&
-        previousRoute !== "/login" &&
-        previousRoute !== "/register"
-      ) {
-        selectedServer.lastSelectedChannel = previousRoute?.split("/")[2];
-      }
-      if (serverToSelect) {
-        setSelectedServer((prev) => {
-          if (prev) {
-            prev.lastSelectedChannel = prevChannelId;
-          }
-          return serverToSelect;
-        });
-      }
     } else if (serverToSelect) {
-      setSelectedServer(serverToSelect);
     }
   }
 
@@ -202,6 +229,8 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         selectedServer.updateChannelInfo(data);
       }
       setSelectedChannelId(channelId);
+      selectedServer.lastSelectedChannel = channelId;
+      updateLastSelectedChannel(selectedServer.id, channelId);
     }
   };
 
