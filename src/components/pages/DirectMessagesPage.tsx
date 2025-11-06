@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const DirectMessagesPage = () => {
-  const { isFetchingDms, selectedSidebarTab, handleSidebarSelect } = useDirectMessageContext();
+  const { isFetchingDms, selectedSidebarTab } = useDirectMessageContext();
   const navigate = useNavigate()
 
   useEffect(() => {
