@@ -1,11 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import {
-  ChannelSettingsModal,
-  CreateChannelModal,
-  CreateServerModal,
-  DeleteChannelModal,
-  ServerNav,
-} from "components";
+import { useNavigate } from "react-router-dom";
 import {
   ContextMenuProvider,
   DirectMessagesProvider,
@@ -16,6 +9,7 @@ import {
   useUserContext,
 } from "context";
 import { useEffect } from "react";
+import AppMain from "./AppMain";
 
 const AppLayout = () => {
   const { socket } = useSocketContext();
@@ -52,16 +46,7 @@ const AppLayout = () => {
         <DirectMessagesProvider>
           <ModalProvider>
             <ContextMenuProvider>
-              <div className="h-full flex">
-                <ServerNav />
-                <main className="grow flex bg-grey-600">
-                  <Outlet />
-                </main>
-                <CreateServerModal />
-                <CreateChannelModal />
-                <DeleteChannelModal />
-                <ChannelSettingsModal />
-              </div>
+              <AppMain />
             </ContextMenuProvider>
           </ModalProvider>
         </DirectMessagesProvider>

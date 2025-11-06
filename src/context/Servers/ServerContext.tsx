@@ -98,7 +98,9 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
     const initializeSelectedChannel = async () => {
       if (selectedServer) {
         // When a server is selected, fetch its lastSelectedChannel details
-        const lastChannelId = getLastSelectedChannel(selectedServer);
+        const cachedChannelId = getLastSelectedChannel(selectedServer);
+        const pathChannelId = location.pathname.split('/')[3];
+        const lastChannelId = pathChannelId !== cachedChannelId ? pathChannelId : cachedChannelId
         const foundChannel = selectedServer.findChannelInServer(lastChannelId);
         if (lastChannelId && foundChannel) {
           if (!foundChannel.hasBeenFetched()) {
@@ -131,14 +133,12 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
   }, [user]);
 
   function handleServerSelect(id: string, prevChannelId: string) {
-    const serverToSelect = servers.find((server) => server.id === id);
     if (id === "0") {
       if (selectedServer && prevChannelId !== "") {
         selectedServer.lastSelectedChannel = prevChannelId;
         updateLastSelectedChannel(selectedServer.id, prevChannelId);
       }
       setSelectedServer(undefined);
-    } else if (serverToSelect) {
     }
   }
 

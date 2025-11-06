@@ -2,14 +2,16 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { DmUser, DmUserListType, Message } from "model";
 import { useLazyGetDmUsersQuery, useSendMessageToUserMutation } from "api";
 import { useSocketContext, useUserContext } from "context";
+import { useLocation } from "react-router-dom";
 
 type DirectMessagesContextType = {
-  selectedSidebarTab: string;
+  selectedSidebarTab: string | undefined;
   handleSidebarSelect: (id: string) => void;
   dmUsers: DmUserListType;
   updateDMUsers: (dmUser: DmUser) => void;
   setCurrentMessage: (id: string, currentMessage: string) => void;
   sendMessage: (message: Message) => void;
+  isFetchingDms: boolean;
 };
 
 type DirectMessagesProviderProps = {
@@ -17,19 +19,26 @@ type DirectMessagesProviderProps = {
 };
 
 export const DirectMessagesContext = createContext<DirectMessagesContextType>({
-  selectedSidebarTab: "0",
+  selectedSidebarTab: undefined,
   dmUsers: {},
   handleSidebarSelect: () => {},
   updateDMUsers: () => {},
   setCurrentMessage: () => {},
   sendMessage: () => {},
+  isFetchingDms: true,
 });
+
+const LAST_SELECTED_DM = "lastSelectedDm";
 
 const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
   const { user } = useUserContext();
   const { socket } = useSocketContext();
-  const [getDmUsers, { data: dmUserList }] = useLazyGetDmUsersQuery();
-  const [selectedSidebarTab, setSelectedSidebarTab] = useState("0");
+  const { pathname } = useLocation();
+  const [getDmUsers, { data: dmUserList, isLoading, isFetching }] =
+    useLazyGetDmUsersQuery();
+  const [selectedSidebarTab, setSelectedSidebarTab] = useState<
+    string | undefined
+  >(undefined);
   const [dmUsers, setDmUsers] = useState<DmUserListType>(dmUserList || {});
   const [sendMessageToUser] = useSendMessageToUserMutation();
 
@@ -51,6 +60,28 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
       getDmUsers().then((res) => buildDmUserList(res.data));
     }
   }, [user]);
+
+  useEffect(() => {
+    const atBase = pathname.includes("@me");
+    if (isLoading || isFetching) return;
+
+    if (Object.keys(dmUsers).length) {
+      if (!selectedSidebarTab && atBase && pathname.split("/").length === 3) {
+        const lastSelectedDm = localStorage.getItem(LAST_SELECTED_DM);
+        if (lastSelectedDm) {
+          setSelectedSidebarTab(lastSelectedDm);
+        } else {
+          setSelectedSidebarTab("0");
+        }
+      } else if (atBase && pathname.split("/").length === 4) {
+        const dmId = pathname.split("/")[3];
+        setSelectedSidebarTab(dmId);
+        localStorage.setItem(LAST_SELECTED_DM, dmId);
+      }
+    } else {
+      setSelectedSidebarTab("0");
+    }
+  }, [selectedSidebarTab, pathname, dmUsers]);
 
   function handleSidebarSelect(id: string) {
     setSelectedSidebarTab(id);
@@ -100,6 +131,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
         updateDMUsers,
         setCurrentMessage,
         sendMessage,
+        isFetchingDms: isFetching || isLoading
       }}
     >
       {children}

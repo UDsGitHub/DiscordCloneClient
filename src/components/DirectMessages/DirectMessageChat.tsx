@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { UserAvatar, MessageChip } from "components";
+import { UserAvatar, MessageChip, PageLoader } from "components";
 import { DirectMessagesContext, useUserContext } from "context";
 import { Message } from "model";
 import { useFriendState } from "hooks";
@@ -13,9 +13,8 @@ const DirectMessageChat = () => {
     DirectMessagesContext
   );
   const { data: friends, isLoading: isLoadingFriends } = useGetFriendsQuery();
-  const currentDmUser = dmUsers
-    ? dmUsers[selectedSidebarTab]
-    : dmUsers[Object.keys(dmUsers)[0]];
+  const currentDmUser =
+    dmUsers[selectedSidebarTab || ""] || dmUsers[Object.keys(dmUsers)[0]];
   const [messageList, setMessageList] = useState<Message[]>(
     currentDmUser?.messageList || []
   );
@@ -37,7 +36,7 @@ const DirectMessageChat = () => {
   }
 
   useEffect(() => {
-    if (dmUsers) {
+    if (dmUsers && currentDmUser) {
       setMessageList(currentDmUser.messageList);
     }
   }, [dmUsers, selectedSidebarTab]);
@@ -98,6 +97,8 @@ const DirectMessageChat = () => {
       </div>
     );
   }, [friends, selectedSidebarTab]);
+
+  if (!currentDmUser) return <PageLoader />;
 
   return (
     <>

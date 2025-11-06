@@ -16,6 +16,11 @@ const DirectMessagesSidebar = () => {
     navigate("/channels/@me");
   };
 
+  const handleDirectMessaageChatClick = (id: string) => {
+    handleSidebarSelect(id)
+    navigate(`/channel/@me/${id}`)
+  }
+
   return (
     <Sidebar
       topBar={
@@ -78,8 +83,8 @@ const DirectMessagesSidebar = () => {
             <DirectMessageUser
               key={user}
               user={dmUserList[user]}
-              selectedSidebarTab={selectedSidebarTab}
-              onClick={handleSidebarSelect}
+              selectedSidebarTab={selectedSidebarTab || "0"}
+              onClick={handleDirectMessaageChatClick}
             />
           ))}
         </ul>
