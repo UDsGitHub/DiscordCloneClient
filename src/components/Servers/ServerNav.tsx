@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AddServerButton from "./AddServerButton";
-import { useServerContext } from "context";
+import { useDirectMessageContext, useServerContext } from "context";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ServerType } from "model";
 import ServerAvatar from "./ServerAvatar";
@@ -16,6 +16,7 @@ const initializeActiveTab = (currentRoute?: string) => {
 
 const ServerNav = () => {
   const { servers, selectedServer, handleServerSelect } = useServerContext();
+  const {selectedSidebarTab: dmSelectState} = useDirectMessageContext()
   const location = useLocation();
   const navigate = useNavigate();
   const [active, setActive] = useState(() => initializeActiveTab(location.pathname));
@@ -24,7 +25,11 @@ const ServerNav = () => {
     if (id === "0") {
       setActive(id);
       handleServerSelect("0", selectedServer?.lastSelectedChannel ?? "");
-      navigate("/channels/@me");
+      if (dmSelectState && dmSelectState !== '0') {
+        navigate(`/channels/@me/${dmSelectState}`);
+      } else {
+        navigate("/channels/@me");
+      }
     }
   };
 

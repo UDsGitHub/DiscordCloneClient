@@ -1,29 +1,32 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { UserAvatar, MessageChip, PageLoader } from "components";
+import { UserAvatar, MessageChip, PageLoader, BeatLoader } from "components";
 import { DirectMessagesContext, useUserContext } from "context";
 import { Message } from "model";
 import { useFriendState } from "hooks";
 import { useGetFriendsQuery } from "api";
 import DMChatTopbar from "./DMChatTopbar";
 import DirectMessagesChatInput from "./DirectMessagesChatInput";
+import { useNavigate } from "react-router-dom";
+import DmChatLoader from "components/common/loaders/DmChatLoader";
 
 const DirectMessageChat = () => {
   const { user } = useUserContext();
-  const { dmUsers, selectedSidebarTab, sendMessage } = useContext(
-    DirectMessagesContext
-  );
+  const { dmUsers, selectedSidebarTab, sendMessage, isFetchingDms } =
+    useContext(DirectMessagesContext);
   const { data: friends, isLoading: isLoadingFriends } = useGetFriendsQuery();
-  const currentDmUser =
-    dmUsers[selectedSidebarTab || ""] || dmUsers[Object.keys(dmUsers)[0]];
+  const currentDmUser = dmUsers
+    ? dmUsers[selectedSidebarTab || ""] || dmUsers[Object.keys(dmUsers)[0]]
+    : undefined;
   const [messageList, setMessageList] = useState<Message[]>(
     currentDmUser?.messageList || []
   );
   const { sendFriendRequest, removeFriend } = useFriendState();
+  const navigate = useNavigate();
   const scrollableRef = useRef<HTMLDivElement>(null);
 
   function handleSendMessage(messageString: string) {
     const today = new Date();
-    if (user) {
+    if (user && currentDmUser) {
       const message = {
         fromId: user.id,
         toId: currentDmUser.userId,
@@ -47,8 +50,19 @@ const DirectMessageChat = () => {
     }
   }, [messageList]);
 
+  useEffect(() => {
+    if (
+      !isFetchingDms &&
+      selectedSidebarTab !== undefined &&
+      dmUsers &&
+      !Object.keys(dmUsers).length
+    ) {
+      navigate("/channels/@me");
+    }
+  }, [isFetchingDms, dmUsers]);
+
   const friendActionButtons = useMemo(() => {
-    if (!isLoadingFriends && friends) {
+    if (!isLoadingFriends && friends && currentDmUser) {
       const isDmUserFriend = friends.find(
         (friend) => friend.id == currentDmUser.userId
       );
@@ -87,7 +101,7 @@ const DirectMessageChat = () => {
       <div className="flex gap-2">
         <button
           className="bg-purple-500 text-white p-0.5 px-3 rounded-sm"
-          onClick={() => sendFriendRequest(currentDmUser.userId)}
+          onClick={() => sendFriendRequest(currentDmUser?.userId || "")}
         >
           Add Friend
         </button>
@@ -98,7 +112,7 @@ const DirectMessageChat = () => {
     );
   }, [friends, selectedSidebarTab]);
 
-  if (!currentDmUser) return <PageLoader />;
+  if (!currentDmUser) return <DmChatLoader />;
 
   return (
     <>

@@ -42,15 +42,15 @@ const AppLayout = () => {
 
   return (
     <SocketProvider>
-      <ServerProvider>
-        <DirectMessagesProvider>
+      <DirectMessagesProvider>
+        <ServerProvider>
           <ModalProvider>
             <ContextMenuProvider>
               <AppMain />
             </ContextMenuProvider>
           </ModalProvider>
-        </DirectMessagesProvider>
-      </ServerProvider>
+        </ServerProvider>
+      </DirectMessagesProvider>
     </SocketProvider>
   );
 };
