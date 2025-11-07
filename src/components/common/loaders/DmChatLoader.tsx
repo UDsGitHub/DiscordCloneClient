@@ -23,7 +23,7 @@ const DmChatLoader = () => {
         <div className="flex flex-col gap-4 mt-20">
           {Array(6)
             .fill(0)
-            .map((it, i) => (
+            .map((_, i) => (
               <div>
                 <CustomSkeleton height={40} width={"100%"} />
                 {i % 3 == 1 && (

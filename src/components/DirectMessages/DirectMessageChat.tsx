@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { UserAvatar, MessageChip, PageLoader, BeatLoader } from "components";
+import { UserAvatar, MessageChip } from "components";
 import { DirectMessagesContext, useUserContext } from "context";
 import { Message } from "model";
 import { useFriendState } from "hooks";

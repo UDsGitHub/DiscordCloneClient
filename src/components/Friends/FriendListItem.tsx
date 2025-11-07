@@ -19,7 +19,7 @@ const FriendListItem = ({ friend }: Props) => {
     "h-9 w-9 bg-grey-700 rounded-full duration-300 hover:bg-grey-800 hover:text-white flex justify-center items-center";
 
   const startDirectMessage = () => {
-    if (Object.keys(dmUsers).includes(friend.id)) {
+    if (dmUsers && Object.keys(dmUsers).includes(friend.id)) {
       handleSidebarSelect(friend.id);
       navigate(`/channels/@me/${friend.id}`);
     }
