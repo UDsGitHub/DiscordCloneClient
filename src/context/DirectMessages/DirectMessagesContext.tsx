@@ -65,10 +65,7 @@ const DirectMessagesProvider = ({ children }: DirectMessagesProviderProps) => {
     if (isLoading || isFetching || dmUsers === undefined) return;
 
     if (!selectedSidebarTab && atBase && pathname.split("/").length === 3) {
-      const lastSelectedDm = localStorage.getItem(LAST_SELECTED_DM);
-      if (lastSelectedDm) {
-        setSelectedSidebarTab("0");
-      }
+      setSelectedSidebarTab("0");
     } else if (atBase && pathname.split("/").length === 4) {
       const dmId = pathname.split("/")[3];
       setSelectedSidebarTab(dmId);
