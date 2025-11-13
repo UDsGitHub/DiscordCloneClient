@@ -17,7 +17,7 @@ const FriendRequestInput = () => {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    sendFriendRequest(inputUsername);
+    sendFriendRequest({ toUsername: inputUsername });
     setInputUsername("");
   };
 

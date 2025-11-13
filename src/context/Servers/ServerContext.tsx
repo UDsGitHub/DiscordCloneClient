@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { ChannelMessageType, ChannelType, ServerType } from "model";
+import { ChannelMessageType } from "model";
 import {
   useDeleteServerChannelMutation,
   useLazyGetChannelInfoQuery,
@@ -9,11 +9,12 @@ import {
 import { useUserContext } from "context";
 import { ServerModel } from "model/Servers/ServerModel";
 import { useLocation } from "react-router-dom";
+import { ChannelModel } from "model/Servers/ChannelModel";
 
 type ServerContextType = {
-  servers: ServerType[];
-  selectedServer?: ServerType;
-  selectedChannel?: ChannelType;
+  servers: ServerModel[];
+  selectedServer?: ServerModel;
+  selectedChannel?: ChannelModel;
   handleServerSelect: (id: string, prevChannelId: string) => void;
   handleChannelMessageSend: (messageContent: ChannelMessageType) => void;
   updateCurrentMessage: (channelId: string, message: string) => void;
@@ -72,7 +73,7 @@ const updateLastSelectedChannel = (serverId: string, channelId: string) => {
 
 const ServerProvider = ({ children }: ServerProviderProps) => {
   const { user } = useUserContext();
-  const [getServers] = useLazyGetServersQuery();
+  const [getServers, { data: apiServers }] = useLazyGetServersQuery();
   const [getChannelInfo] = useLazyGetChannelInfoQuery();
   const [sendMessageToChannel] = useSendMessageToChannelMutation();
   const [deleteServerChannel] = useDeleteServerChannelMutation();
@@ -99,8 +100,9 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
       if (selectedServer) {
         // When a server is selected, fetch its lastSelectedChannel details
         const cachedChannelId = getLastSelectedChannel(selectedServer);
-        const pathChannelId = location.pathname.split('/')[3];
-        const lastChannelId = pathChannelId !== cachedChannelId ? pathChannelId : cachedChannelId
+        const pathChannelId = location.pathname.split("/")[3];
+        const lastChannelId =
+          pathChannelId !== cachedChannelId ? pathChannelId : cachedChannelId;
         const foundChannel = selectedServer.findChannelInServer(lastChannelId);
         if (lastChannelId && foundChannel) {
           if (!foundChannel.hasBeenFetched()) {
@@ -131,6 +133,12 @@ const ServerProvider = ({ children }: ServerProviderProps) => {
         .catch((err) => console.log(err));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (apiServers) {
+      setServers(apiServers.map((it) => new ServerModel(it)));
+    }
+  }, [apiServers]);
 
   function handleServerSelect(id: string, prevChannelId: string) {
     if (id === "0") {

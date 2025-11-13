@@ -3,7 +3,7 @@ export interface ServerType {
   name: string;
   displayPicture?: string;
   lastSelectedChannel: string;
-  channels: ChannelType[];
+  channels: RawChannelType[];
   categories: CategoryType[];
   members: ServerMemberType[];
 }
@@ -16,7 +16,7 @@ export interface ServerMemberType {
   // status: string; // eventually should become 'online' | 'offline' | 'dnd'
 }
 
-export interface ChannelType {
+export interface RawChannelType {
   id: string;
   categoryId?: number;
   name: string;
@@ -30,7 +30,7 @@ export interface CategoryType {
   id: number;
   server_id: string;
   name: string;
-  channels: ChannelType[];
+  channels: RawChannelType[];
 }
 
 export interface ChannelMessageType {

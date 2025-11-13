@@ -5,6 +5,7 @@ import {
   DeleteChannelModal,
   ChannelSettingsModal,
 } from "components/Servers";
+import InvitePeopleModal from "components/Servers/Modals/InvitePeopleModal";
 import { Outlet } from "react-router-dom";
 
 const AppMain = () => {
@@ -17,6 +18,7 @@ const AppMain = () => {
       <CreateServerModal />
       <CreateChannelModal />
       <DeleteChannelModal />
+      <InvitePeopleModal />
       <ChannelSettingsModal />
     </div>
   );

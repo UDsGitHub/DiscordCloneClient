@@ -1,4 +1,4 @@
-import { formStateType } from "./CreateServerModal";
+import { formStateType } from "../Modals/CreateServerModal";
 
 type Props = {
   onClose: () => void;

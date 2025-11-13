@@ -1,36 +1,34 @@
 import { useContextMenuContext, useModalContext } from "context";
+import { ChannelModel, ChannelType } from "model/Servers/ChannelModel";
 import { useEffect } from "react";
 
 type Props = {
   coord: number[];
-  channelId: string;
+  eventChannel: ChannelModel;
 };
 
-const ChannelItemContextMenu = ({ coord, channelId }: Props) => {
+const ChannelItemContextMenu = ({ coord, eventChannel }: Props) => {
   const {
     openChannelSettingsModal,
     openDeleteChannelModal,
     openCreateChannelModal,
-    getEditingChannel,
   } = useModalContext();
   const { isVisible, hideContextMenu } = useContextMenuContext();
   const liStyles =
-    "hover:bg-purple-500 hover:text-white rounded-sm px-[8px] py-[6px]";
-
-  const editingChannel = getEditingChannel(channelId);
+    "cursor-pointer hover:bg-purple-500 hover:text-white rounded-sm px-[8px] py-[6px]";
 
   const handleEditMenuClick = () => {
-    openChannelSettingsModal(channelId);
+    openChannelSettingsModal(eventChannel);
     hideContextMenu();
   };
 
   const handleCreateTextChannelClick = () => {
-    openCreateChannelModal(editingChannel?.categoryId, editingChannel?.type);
+    openCreateChannelModal(eventChannel.categoryId, eventChannel.type);
     hideContextMenu();
   };
 
   const handleDeleteMenuClick = () => {
-    openDeleteChannelModal(channelId);
+    openDeleteChannelModal(eventChannel);
     hideContextMenu();
   };
 
@@ -54,20 +52,19 @@ const ChannelItemContextMenu = ({ coord, channelId }: Props) => {
       className="context-menu w-[188px] z-50 absolute bg-grey-800 text-grey-300 rounded-md"
     >
       <ul className="p-2 text-xs rounded-md">
-        <li className={liStyles}>
-          <button onClick={handleEditMenuClick}>Edit Channel</button>
+        <li className={liStyles} onClick={handleEditMenuClick}>
+          Edit Channel
         </li>
         <li className={liStyles} onClick={handleCreateTextChannelClick}>
-          <button>
-            Create {editingChannel?.type === 0 ? "Text" : "Voice"} Channel
-          </button>
+          Create {eventChannel.type === ChannelType.text ? "Text" : "Voice"} Channel
         </li>
         <li
           className={
-            "hover:bg-red-600 hover:text-white rounded-sm px-[8px] py-[6px] text-red-600"
+            "cursor-pointer hover:bg-red-600 hover:text-white rounded-sm px-[8px] py-[6px] text-red-600"
           }
+          onClick={handleDeleteMenuClick}
         >
-          <button onClick={handleDeleteMenuClick}>Delete Channel</button>
+          Delete Channel
         </li>
       </ul>
     </div>

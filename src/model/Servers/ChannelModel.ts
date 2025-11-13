@@ -1,4 +1,9 @@
-import { ChannelMessageType, ChannelType } from ".";
+import { ChannelMessageType, RawChannelType } from ".";
+
+export enum ChannelType {
+  text,
+  voice
+}
 
 export class ChannelModel {
   id: string;
@@ -10,7 +15,7 @@ export class ChannelModel {
   currentMessage: string;
   private fetched: boolean = false;
 
-  constructor(raw: ChannelType) {
+  constructor(raw: RawChannelType) {
     this.id = raw.id;
     this.categoryId = raw.categoryId;
     this.name = raw.name;

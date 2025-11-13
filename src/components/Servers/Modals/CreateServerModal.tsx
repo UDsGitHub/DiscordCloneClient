@@ -1,7 +1,7 @@
 import { useState } from "react";
-import AddServerCustomizeForm from "./AddServerCustomizeForm";
-import JoinServerForm from "./JoinServerForm";
-import AddServerTemplateForm from "./AddServerTemplateForm";
+import AddServerCustomizeForm from "../Forms/AddServerCustomizeForm";
+import JoinServerForm from "../Forms/JoinServerForm";
+import AddServerTemplateForm from "../Forms/AddServerTemplateForm";
 import { useModalContext } from "context";
 
 export type formStateType = "template" | "customize" | "join";

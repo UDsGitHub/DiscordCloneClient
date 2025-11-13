@@ -7,33 +7,28 @@ export type User = {
   birthdate: string;
 };
 
-export type DecodedJWT = {
-  id: string;
-  email: string;
-  displayName: string;
-  username: string;
-  birthdate: string;
-  password: string;
-  exp: number;
-  iat: number;
+export type FriendUser = User & {
+  serverInvites: string[];
 };
 
-export interface FriendUser {
+export interface FriendRequest {
   user: User;
-}
-
-export interface FriendRequest extends FriendUser {
-  direction: FriendRequestDirection,
-  status: FriendRequestStatus
+  direction: FriendRequestDirection;
+  status: FriendRequestStatus;
 }
 
 export enum FriendRequestDirection {
   outgoing,
-  incoming
+  incoming,
 }
 
 export enum FriendRequestStatus {
   pending,
   accepted,
-  denied
+  denied,
+}
+
+export type ServerInviteRequest = {
+  serverId: string,
+  userId: string,
 }

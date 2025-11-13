@@ -25,9 +25,23 @@ export default function useFriendState() {
     return userList;
   }
 
-  function sendFriendRequest(username: string) {
-    if (username !== "") {
-      sendFriendRequestToUser(username)
+  function sendFriendRequest({
+    toUsername,
+    toUserId,
+  }: {
+    toUsername?: string;
+    toUserId?: string;
+  }) {
+    if (toUsername && toUsername !== "") {
+      sendFriendRequestToUser({ toUsername })
+        .unwrap()
+        .catch((e) => {
+          if ("status" in e && e.status >= 400) {
+            showToast(e.data.message);
+          }
+        });
+    } else if (toUserId && toUserId !== "") {
+      sendFriendRequestToUser({ toUserId })
         .unwrap()
         .catch((e) => {
           if ("status" in e && e.status >= 400) {

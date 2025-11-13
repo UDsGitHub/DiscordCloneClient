@@ -72,7 +72,9 @@ const DirectMessageChat = () => {
           <div className="flex gap-2">
             <button
               className="bg-purple-500 text-white p-0.5 px-3 rounded-sm"
-              onClick={() => sendFriendRequest(currentDmUser.userId)}
+              onClick={() =>
+                sendFriendRequest({ toUserId: currentDmUser.userId })
+              }
             >
               Add Friend
             </button>
@@ -101,7 +103,9 @@ const DirectMessageChat = () => {
       <div className="flex gap-2">
         <button
           className="bg-purple-500 text-white p-0.5 px-3 rounded-sm"
-          onClick={() => sendFriendRequest(currentDmUser?.userId || "")}
+          onClick={() =>
+            sendFriendRequest({ toUserId: currentDmUser?.userId || "" })
+          }
         >
           Add Friend
         </button>

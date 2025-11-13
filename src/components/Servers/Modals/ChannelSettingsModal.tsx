@@ -1,6 +1,6 @@
 import { useModalContext, useServerContext } from "context";
 import { useEffect, useState } from "react";
-import ChannelOverviewForm from "./ChannelOverviewForm";
+import ChannelOverviewForm from "../Forms/ChannelOverviewForm";
 
 type selectedTabType = "overview" | "other";
 
@@ -92,7 +92,8 @@ const ChannelSettingsModal = () => {
                   "py-[6px] px-[10px] rounded-md cursor-pointer mb-0.5 hover:bg-grey-450 flex items-center justify-between active:bg-[#404249] active:text-grey-300"
                 }
                 onClick={() =>
-                  openDeleteChannelModal(editingChannel?.id || "", false)
+                  editingChannel &&
+                  openDeleteChannelModal(editingChannel, false)
                 }
               >
                 <p>Delete Channel</p>

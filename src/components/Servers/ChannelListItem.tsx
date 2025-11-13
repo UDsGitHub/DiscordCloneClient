@@ -1,9 +1,9 @@
-import { useContextMenuContext, useServerContext } from "context";
-import { ChannelType } from "model";
+import { ContextMenuType, useContextMenuContext, useServerContext } from "context";
+import { ChannelModel } from "model/Servers/ChannelModel";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
-  channel: ChannelType;
+  channel: ChannelModel;
 };
 
 const ChannelListItem = ({ channel }: Props) => {
@@ -19,7 +19,7 @@ const ChannelListItem = ({ channel }: Props) => {
   const handleContextMenu = (e: React.MouseEvent<HTMLLIElement>) => {
     if (e.button === 2) {
       e.preventDefault();
-      showContextMenu([e.clientX, e.clientY], channel.id);
+      showContextMenu(ContextMenuType.channel, [e.clientX, e.clientY], channel);
     }
   };
 

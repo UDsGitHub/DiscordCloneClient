@@ -1,10 +1,10 @@
 import { MessageInput } from "components/common";
 import { useServerContext } from "context";
-import { ChannelType } from "model";
+import { ChannelModel } from "model/Servers/ChannelModel";
 import { useEffect, useState } from "react";
 
 type Props = {
-  channel: ChannelType;
+  channel: ChannelModel;
   handleSendMessage: (message: string) => void;
 };
 

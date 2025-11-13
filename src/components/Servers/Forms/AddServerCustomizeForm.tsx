@@ -1,4 +1,4 @@
-import { formStateType } from "./CreateServerModal";
+import { formStateType } from "../Modals/CreateServerModal";
 import AddServerBaseForm from "./AddServerBaseForm";
 import { useState } from "react";
 import { useToastContext, useUserContext } from "context";
@@ -56,8 +56,9 @@ const AddServerCustomizeForm = ({ onClose, changeFormState }: Props) => {
     if (serverName !== "") {
       const formData = new FormData();
       formData.append("serverName", serverName);
-      if (serverDisplayPicture)
+      if (serverDisplayPicture) {
         formData.append("serverDisplayPicture", serverDisplayPicture);
+      }
       createServer(formData)
         .unwrap()
         .then(() => {

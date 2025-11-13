@@ -4,6 +4,8 @@ import {
   User,
   SendMessageToUserRequest,
   FriendRequest,
+  FriendUser,
+  ServerInviteRequest,
 } from "model";
 import { API_URL } from "../config";
 
@@ -22,12 +24,13 @@ export const usersApi = createApi({
       }),
       providesTags: ["user"],
     }),
-    getFriends: builder.query<User[], void>({
+    getFriends: builder.query<FriendUser[], void>({
       query: () => ({
         url: `/user/getFriends`,
         method: "GET",
       }),
-      providesTags: ["friends"],
+      providesTags: (result) =>
+        result ? result.map((it) => ({ type: "friends", id: it.id })) : [],
     }),
     getDmUsers: builder.query<DmUserListType, void>({
       query: () => ({
@@ -44,11 +47,14 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ["dmUsers"],
     }),
-    sendFriendRequest: builder.mutation<void, string>({
-      query: (toUsername) => ({
+    sendFriendRequest: builder.mutation<
+      void,
+      { toUsername?: string; toUserId?: string }
+    >({
+      query: ({ toUsername, toUserId }) => ({
         url: `/user/sendFriendRequest`,
         method: "POST",
-        body: { toUsername },
+        body: { toUsername, toUserId },
       }),
       invalidatesTags: ["friendRequests"],
     }),
@@ -83,6 +89,16 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ["friendRequests"],
     }),
+    sendServerInvite: builder.mutation<void, ServerInviteRequest>({
+      query: ({ serverId, userId }) => ({
+        url: `/user/sendServerInvite`,
+        method: "POST",
+        body: { serverId, userId },
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: "friends", id: arg.userId },
+      ],
+    }),
   }),
 });
 
@@ -96,4 +112,5 @@ export const {
   useAddFriendMutation,
   useUnFriendMutation,
   useGetFriendsQuery,
+  useSendServerInviteMutation,
 } = usersApi;

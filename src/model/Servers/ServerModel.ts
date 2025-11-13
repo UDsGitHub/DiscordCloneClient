@@ -1,6 +1,6 @@
-import { ChannelType, ServerMemberType, ServerType } from ".";
+import { RawChannelType, ServerMemberType, ServerType } from ".";
 import { CategoryModel } from "./CategoryModel";
-import { ChannelModel } from "./ChannelModel";
+import { ChannelModel, ChannelType } from "./ChannelModel";
 
 export class ServerModel {
   id: string;
@@ -21,6 +21,28 @@ export class ServerModel {
     this.members = raw.members;
   }
 
+  public getFirstChannelInServer() {
+    let foundChannel = undefined;
+    if (this.channels.length) {
+      foundChannel = this.channels.find(
+        (channel) => channel.type === ChannelType.text
+      );
+    }
+    if (!foundChannel && this.categories.length) {
+      const categoryWithValidChannel = this.categories.find(
+        (category) =>
+          category.channels.find(
+            (channel) => channel.type === ChannelType.text
+          ) !== undefined
+      );
+      foundChannel = categoryWithValidChannel?.channels.find(
+        (channel) => channel.type === ChannelType.text
+      );
+    }
+
+    return foundChannel;
+  }
+
   public findChannelInServer(channelId: string): ChannelModel | undefined {
     const channel = this.channels.find((c) => c.id === channelId);
     if (channel) return channel;
@@ -31,7 +53,7 @@ export class ServerModel {
     return undefined;
   }
 
-  public updateChannelInfo(channelInfo: ChannelType): void {
+  public updateChannelInfo(channelInfo: RawChannelType): void {
     this.channels = this.channels.map((it) => {
       if (it.id === channelInfo.id) {
         const updatedChannel = new ChannelModel(channelInfo);
@@ -67,7 +89,7 @@ export class ServerModel {
     });
   }
 
-  public addChannel(channelInfo: ChannelType): void {
+  public addChannel(channelInfo: RawChannelType): void {
     if (channelInfo.categoryId) {
       this.categories = this.categories.map((category) => {
         if (category.id === channelInfo.categoryId) {

@@ -10,4 +10,5 @@ export { default as Tooltip } from "./Tooltip";
 export { default as MessageInput } from "./MessageInput";
 export { default as UploadProfilePicture } from "./UploadProfilePicture";
 export { default as VerticalLine } from "./VerticalLine";
+export { default as OutlineInputField } from "./OutlineInputField";
 export * from "./loaders";

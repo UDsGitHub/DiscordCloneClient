@@ -1,9 +1,10 @@
 import { useModalContext, useServerContext } from "context";
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
-import ChannelTypeRadioOptions from "./ChannelTypeRadioOptions";
+import ChannelTypeRadioOptions from "../ChannelTypeRadioOptions";
 import { CreateChannelRequestType, useCreateServerChannelMutation } from "api";
 import { useNavigate } from "react-router-dom";
+import { ChannelType } from "model/Servers/ChannelModel";
 
 const CreateChannelModal = () => {
   const {
@@ -13,7 +14,7 @@ const CreateChannelModal = () => {
     channelType: defaultChannelType,
   } = useModalContext();
   const [selectedChannelType, setSelectedChannelType] = useState<0 | 1>(
-    defaultChannelType
+    defaultChannelType ?? ChannelType.text
   );
   const [channelName, setChannelName] = useState("");
   const [createServerChannel, { isLoading }] = useCreateServerChannelMutation();
@@ -31,13 +32,15 @@ const CreateChannelModal = () => {
 
   const getCategoryName = () => {
     if (selectedServer && selectedChannelCategory) {
-      const category = selectedServer.categories.find(category => category.id === selectedChannelCategory)
+      const category = selectedServer.categories.find(
+        (category) => category.id === selectedChannelCategory
+      );
       if (category) {
         return `in ${category.name}`;
       }
     }
-    return ''
-  }
+    return "";
+  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,10 +76,6 @@ const CreateChannelModal = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
-
-  useEffect(() => {
-    setSelectedChannelType(defaultChannelType);
-  }, [defaultChannelType]);
 
   return (
     <div

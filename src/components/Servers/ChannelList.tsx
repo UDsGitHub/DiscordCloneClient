@@ -1,8 +1,8 @@
-import { ChannelType } from "model";
 import ChannelListItem from "./ChannelListItem";
+import { ChannelModel } from "model/Servers/ChannelModel";
 
 type Props = {
-  channels: ChannelType[];
+  channels: ChannelModel[];
 };
 
 const ChannelList = ({ channels }: Props) => {
