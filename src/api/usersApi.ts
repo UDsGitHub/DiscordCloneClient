@@ -95,7 +95,7 @@ export const usersApi = createApi({
         method: "POST",
         body: { serverId, userId },
       }),
-      invalidatesTags: (result, error, arg) => [
+      invalidatesTags: (_result, _error, arg) => [
         { type: "friends", id: arg.userId },
       ],
     }),

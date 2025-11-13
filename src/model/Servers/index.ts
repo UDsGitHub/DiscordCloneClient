@@ -1,3 +1,5 @@
+import { ChannelModel } from "./ChannelModel";
+
 export interface ServerType {
   id: string;
   name: string;
@@ -30,7 +32,7 @@ export interface CategoryType {
   id: number;
   server_id: string;
   name: string;
-  channels: RawChannelType[];
+  channels: ChannelModel[];
 }
 
 export interface ChannelMessageType {
