@@ -10,6 +10,8 @@ export interface ServerType {
   members: ServerMemberType[];
 }
 
+export type ServerPreview = Pick<ServerType, "id" | "name" | "displayPicture">;
+
 export interface ServerMemberType {
   userId: string;
   displayName: string;

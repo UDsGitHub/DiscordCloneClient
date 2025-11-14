@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../config";
-import { ChannelMessageType, RawChannelType, ServerType } from "model";
+import {
+  ChannelMessageType,
+  RawChannelType,
+  ServerType,
+  ServerPreview,
+} from "model";
 
 export interface CreateServerRequest {
   serverName: string;
@@ -88,6 +93,29 @@ export const serverApi = createApi({
         method: "DELETE",
       }),
     }),
+    getServerInviteCode: builder.query<{ inviteCode: string }, string>({
+      query: (id) => ({
+        url: `server/getInviteCode/${id}`,
+        method: "GET",
+      }),
+    }),
+    getServerForInviteCode: builder.query<ServerPreview, string>({
+      query: (id) => ({
+        url: `server/getServerForInviteCode/${id}`,
+        method: "GET",
+      }),
+    }),
+    addServerMember: builder.mutation<
+      void,
+      { userId: string; serverId: string }
+    >({
+      query: (body) => ({
+        url: `server/addMember`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["servers", "channel"],
+    }),
   }),
 });
 
@@ -99,6 +127,9 @@ export const {
   useSendMessageToChannelMutation,
   useCreateServerChannelMutation,
   useDeleteServerChannelMutation,
+  useLazyGetServerInviteCodeQuery,
+  useGetServerForInviteCodeQuery,
+  useAddServerMemberMutation
 } = serverApi;
 
 export const getChannelInfoSelector = serverApi.endpoints.getChannelInfo.select;

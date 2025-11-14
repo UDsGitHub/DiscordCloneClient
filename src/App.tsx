@@ -5,6 +5,7 @@ import {
   ServersPage,
   FriendsPage,
   DirectMessageChat,
+  InvitePage,
 } from "components";
 import {
   Navigate,
@@ -33,13 +34,22 @@ function App() {
             },
           ],
         },
+        {
+          path: "/channels/",
+          element: <Navigate to="/channels/@me" replace />,
+        },
+        { path: "/channels/:serverId/", Component: ServersPage },
         { path: "/channels/:serverId/:channelId", Component: ServersPage },
       ],
+    },
+    {
+      path: "/invite/:code",
+      Component: InvitePage,
     },
     { path: "/login", Component: LoginRegisterPage },
     { path: "/register", Component: LoginRegisterPage },
   ]);
-  
+
   return <RouterProvider router={router} />;
 }
 

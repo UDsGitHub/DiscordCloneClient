@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { UserAvatar, MessageChip } from "components";
+import { UserAvatar, MessageChip, DmChatLoader } from "components";
 import { DirectMessagesContext, useUserContext } from "context";
 import { Message } from "model";
 import { useFriendState } from "hooks";
@@ -7,7 +7,6 @@ import { useGetFriendsQuery } from "api";
 import DMChatTopbar from "./DMChatTopbar";
 import DirectMessagesChatInput from "./DirectMessagesChatInput";
 import { useNavigate } from "react-router-dom";
-import DmChatLoader from "components/common/loaders/DmChatLoader";
 
 const DirectMessageChat = () => {
   const { user } = useUserContext();

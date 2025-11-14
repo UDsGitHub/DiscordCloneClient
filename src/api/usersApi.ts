@@ -37,7 +37,10 @@ export const usersApi = createApi({
         url: `/user/getDmUsers`,
         method: "GET",
       }),
-      providesTags: ["dmUsers"],
+      providesTags: (result) =>
+        result
+          ? Object.keys(result).map((id) => ({ type: "dmUsers", id }))
+          : [],
     }),
     sendMessageToUser: builder.mutation<void, SendMessageToUserRequest>({
       query: ({ toUserId, message }) => ({
@@ -90,13 +93,13 @@ export const usersApi = createApi({
       invalidatesTags: ["friendRequests"],
     }),
     sendServerInvite: builder.mutation<void, ServerInviteRequest>({
-      query: ({ serverId, userId }) => ({
-        url: `/user/sendServerInvite`,
+      query: ({ userId, inviteLink }) => ({
+        url: `/user/sendServerInvite/${userId}`,
         method: "POST",
-        body: { serverId, userId },
+        body: { inviteLink },
       }),
       invalidatesTags: (_result, _error, arg) => [
-        { type: "friends", id: arg.userId },
+        { type: "dmUsers", id: arg.userId },
       ],
     }),
   }),

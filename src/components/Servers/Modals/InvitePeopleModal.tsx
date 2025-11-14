@@ -1,6 +1,10 @@
 import { useModalContext } from "context";
 import { useEffect, useRef, useState } from "react";
-import { useGetFriendsQuery, useSendServerInviteMutation } from "api";
+import {
+  useGetFriendsQuery,
+  useLazyGetServerInviteCodeQuery,
+  useSendServerInviteMutation,
+} from "api";
 import OutlineInputField from "components/common/OutlineInputField";
 import { FriendUser } from "model";
 
@@ -16,11 +20,14 @@ const InvitePeopleModal = () => {
     inviteModalContext,
   } = useModalContext();
   const { data: friends, isLoading: isLoadingFriends } = useGetFriendsQuery();
+  const [getServerInviteCode, { isLoading, isFetching }] =
+    useLazyGetServerInviteCodeQuery();
   const [sendServerInvite] = useSendServerInviteMutation();
   const [friendsList, setFriendsList] = useState<FriendUserListItem[]>([]);
   const [searchValue, setSearchValue] = useState("");
+  const [inviteLink, setInviteLink] = useState("");
   const inviteLinkRef = useRef<HTMLInputElement>(null);
-  const InviteServerLink = "helloworld.com";
+  const isFetchingInviteLink = isLoading || isFetching;
   const filteredList = friendsList.filter((it) =>
     it.displayName.toLowerCase().includes(searchValue)
   );
@@ -30,14 +37,14 @@ const InvitePeopleModal = () => {
   };
 
   const handleInviteClick = async (userId: string) => {
-    if (!inviteModalContext?.server) return;
+    if (!inviteModalContext?.server || !inviteLink) return;
     try {
       setFriendsList((prev) =>
         prev.map((it) => (it.id === userId ? { ...it, isLoading: true } : it))
       );
       await sendServerInvite({
-        serverId: inviteModalContext.server.id,
         userId,
+        inviteLink,
       });
       setFriendsList((prev) =>
         prev.map((it) => (it.id === userId ? { ...it, hasInvite: true } : it))
@@ -51,10 +58,10 @@ const InvitePeopleModal = () => {
   };
 
   const handleInviteLinkCopy = () => {
-    if (inviteLinkRef.current) {
+    if (inviteLinkRef.current && !!inviteLink) {
       inviteLinkRef.current.select();
       navigator.clipboard
-        .writeText(InviteServerLink)
+        .writeText(inviteLink)
         .then(() => {
           console.log("Text copied to clipboard successfully!");
         })
@@ -64,8 +71,24 @@ const InvitePeopleModal = () => {
     }
   };
 
+  const generateInviteLink = async () => {
+    if (inviteModalContext !== undefined) {
+      const { inviteCode } = await getServerInviteCode(
+        inviteModalContext.server.id
+      ).unwrap();
+      const baseUrl = window.location.origin;
+      const link = `${baseUrl}/invite/${inviteCode}`;
+      setInviteLink(link);
+    }
+  };
+
   useEffect(() => {
-    console.log("this got rerun with this: ", friends);
+    if (isOpen && !inviteLink) {
+      generateInviteLink();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     setFriendsList(
       friends?.map((it) => ({
         ...it,
@@ -164,7 +187,11 @@ const InvitePeopleModal = () => {
                     }`}
                     onClick={() => handleInviteClick(it.id)}
                   >
-                    {it.isLoading ? "..." : it.hasInvite ? "Sent" : "Invite"}
+                    {it.isLoading || isFetchingInviteLink
+                      ? "..."
+                      : it.hasInvite
+                      ? "Sent"
+                      : "Invite"}
                   </button>
                 </div>
               ))}
@@ -180,7 +207,7 @@ const InvitePeopleModal = () => {
               type="text"
               readOnly
               onFocus={handleInviteLinkCopy}
-              value={InviteServerLink}
+              value={inviteLink}
             />
             <button
               className="cursor-pointer px-5 duration-300 bg-purple-500 hover:bg-purple-500/75 rounded-md font-semibold"

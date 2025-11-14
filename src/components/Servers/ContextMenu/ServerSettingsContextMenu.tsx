@@ -15,7 +15,6 @@ const ServerSettingsContextMenu = ({ coord, eventServer }: Props) => {
     "cursor-pointer hover:bg-purple-500 hover:text-white rounded-sm px-[8px] py-[6px]";
 
   const handleInviteClick = () => {
-    console.log("hello world");
     openInviteModal(eventServer, eventServer.getFirstChannelInServer());
     hideContextMenu();
   };

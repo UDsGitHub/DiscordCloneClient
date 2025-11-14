@@ -29,6 +29,6 @@ export enum FriendRequestStatus {
 }
 
 export type ServerInviteRequest = {
-  serverId: string,
   userId: string,
+  inviteLink: string,
 }
